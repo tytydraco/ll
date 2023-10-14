@@ -1,0 +1,21 @@
+name: ll
+description: Leafly Lookup.
+version: 1.0.0+1
+repository: https://github.com/tytydraco/LL
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.17.6 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: any
+
+flutter:
+  uses-material-design: true
