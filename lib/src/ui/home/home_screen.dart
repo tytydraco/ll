@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _filterStrains(String searchTerm) {
+  void _filterStrains(String searchTerm) async {
     if (searchTerm == '') {
       setState(() {
         _filteredStrains = null;
@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Sativa':
         return Colors.red;
       default:
-        return Colors.blueGrey;
+        return Colors.black54;
     }
   }
 
@@ -122,13 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return ListTile(
               title: Text(strain['name'] as String),
-              trailing: Container(
-                height: 10,
-                width: 10,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: _strainColor(strain['category'] as String?),
-                ),
+              trailing: Icon(
+                Icons.eco,
+                color: _strainColor(strain['category'] as String?),
               ),
               onTap: () {
                 Navigator.push(

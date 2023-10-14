@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ll/src/util/string_ext.dart';
@@ -55,73 +57,68 @@ class _EffectsChartState extends State<EffectsChart> {
     );
   }
 
+  double _getChartMaxY() {
+    return _effectIndicies.values
+        .map((e) => _effects[e]['score'] as double)
+        .reduce(max);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Text(
-            'Effects',
-            style: TextStyle(
-              fontSize: 22,
-            ),
-          ),
-        ),
-        AspectRatio(
-          aspectRatio: 1,
-          child: BarChart(
-            BarChartData(
-              minY: -2,
-              maxY: 2,
-              titlesData: FlTitlesData(
-                leftTitles: const AxisTitles(),
-                rightTitles: const AxisTitles(),
-                topTitles: const AxisTitles(),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    reservedSize: 80,
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      return RotatedBox(
-                        quarterTurns: -1,
-                        child: Text(
-                          _effectIndicies[value]!.capitalize(),
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              barGroups: [
-                _buildGroup('aroused', -6, Colors.red),
-                _buildGroup('hungry', 1, Colors.redAccent),
-                _buildGroup('energetic', -4, Colors.orange),
-                _buildGroup('happy', 0, Colors.orangeAccent),
-                _buildGroup('creative', -5, Colors.yellow),
-                _buildGroup('giggly', -1, Colors.yellowAccent),
-                _buildGroup('uplifted', 6, Colors.lightGreen),
-                _buildGroup('focused', -2, Colors.green),
-                _buildGroup('talkative', 4, Colors.greenAccent),
-                _buildGroup('relaxed', 2, Colors.lightBlue),
-                _buildGroup('tingly', 5, Colors.blue),
-                _buildGroup('euphoric', -3, Colors.purple),
-                _buildGroup('sleepy', 3, Colors.deepPurple),
-              ],
-              gridData: const FlGridData(
-                show: false,
-              ),
-              borderData: FlBorderData(
-                show: false,
+    final chartMaxY = _getChartMaxY();
+
+    return AspectRatio(
+      aspectRatio: 1,
+      child: BarChart(
+        BarChartData(
+          minY: -chartMaxY,
+          maxY: chartMaxY,
+          titlesData: FlTitlesData(
+            leftTitles: const AxisTitles(),
+            rightTitles: const AxisTitles(),
+            topTitles: const AxisTitles(),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                reservedSize: 80,
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return RotatedBox(
+                    quarterTurns: -1,
+                    child: Text(
+                      _effectIndicies[value]!.capitalize(),
+                      textAlign: TextAlign.start,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
+          barGroups: [
+            _buildGroup('aroused', -6, Colors.red),
+            _buildGroup('hungry', 1, Colors.redAccent),
+            _buildGroup('energetic', -4, Colors.orange),
+            _buildGroup('happy', 0, Colors.orangeAccent),
+            _buildGroup('creative', -5, Colors.yellow),
+            _buildGroup('giggly', -1, Colors.yellowAccent),
+            _buildGroup('uplifted', 6, Colors.lightGreen),
+            _buildGroup('focused', -2, Colors.green),
+            _buildGroup('talkative', 4, Colors.greenAccent),
+            _buildGroup('relaxed', 2, Colors.lightBlue),
+            _buildGroup('tingly', 5, Colors.blue),
+            _buildGroup('euphoric', -3, Colors.purple),
+            _buildGroup('sleepy', 3, Colors.deepPurple),
+          ],
+          gridData: const FlGridData(
+            show: false,
+          ),
+          borderData: FlBorderData(
+            show: false,
+          ),
         ),
-      ],
+      ),
     );
   }
 }

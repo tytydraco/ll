@@ -21,7 +21,7 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen> {
   Widget _paramTile(String title, dynamic content) {
-    var formattedContent = content.toString().capitalize();
+    final formattedContent = content.toString().capitalize();
 
     return ListTile(
       title: Text(title),
@@ -46,17 +46,30 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.strain['name'] as String),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green, Colors.teal],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: ListView(
         children: [
-          Image.network(widget.strain['nugImage'] as String),
-          _paramTile('Description',
-              (widget.strain['shortDescriptionPlain'] as String?) ?? 'N/A'),
+          //Image.network(widget.strain['nugImage'] as String),
+          _paramTile(
+            'Description',
+            (widget.strain['shortDescriptionPlain'] as String?) ?? 'N/A',
+          ),
           const Divider(),
           _paramTile('Main effect', widget.strain['topEffect']),
           const Divider(),
           _paramTile(
-              'Other names', (widget.strain['subtitle'] as String?) ?? 'N/A'),
+            'Other names',
+            (widget.strain['subtitle'] as String?) ?? 'N/A',
+          ),
           const Divider(),
           _paramTile(
             'Average rating',
@@ -67,8 +80,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
           const Divider(),
           _paramTile('Category', _getCategory()),
           const Divider(),
-          _paramTile('Average THC content',
-              '${(widget.strain['thc'] as double).round()}%'),
+          _paramTile(
+            'Average THC content',
+            '${(widget.strain['thc'] as double).round()}%',
+          ),
           const Divider(),
           _paramTile('Main terpene', widget.strain['strainTopTerp']),
           const Divider(),

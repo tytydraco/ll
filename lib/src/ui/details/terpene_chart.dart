@@ -27,12 +27,12 @@ class _TerpeneChartState extends State<TerpeneChart> {
       showTitle: true,
       title: title,
       color: color,
-      badgePositionPercentageOffset: 2.5,
+      badgePositionPercentageOffset: 2,
       badgeWidget: Text(
         effect.capitalize(),
         textAlign: TextAlign.center,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 12,
         ),
       ),
       value: _terps[effect]['score'] as double,
@@ -41,43 +41,30 @@ class _TerpeneChartState extends State<TerpeneChart> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Text(
-            'Terpenes',
-            style: TextStyle(
-              fontSize: 22,
+    return Padding(
+      padding: const EdgeInsets.all(100),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: PieChart(
+          PieChartData(
+            centerSpaceRadius: 40,
+            borderData: FlBorderData(
+              show: false,
             ),
+            sectionsSpace: 0,
+            sections: [
+              _buildSection('caryophyllene', Colors.red),
+              _buildSection('humulene', Colors.green),
+              _buildSection('limonene', Colors.yellow),
+              _buildSection('linalool', Colors.purple),
+              _buildSection('myrcene', Colors.blue),
+              _buildSection('ocimene', Colors.pink),
+              _buildSection('pinene', Colors.brown),
+              _buildSection('terpinolene', Colors.orange),
+            ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(100),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: PieChart(
-              PieChartData(
-                centerSpaceRadius: 75,
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                sectionsSpace: 0,
-                sections: [
-                  _buildSection('caryophyllene', Colors.red),
-                  _buildSection('humulene', Colors.green),
-                  _buildSection('limonene', Colors.yellow),
-                  _buildSection('linalool', Colors.purple),
-                  _buildSection('myrcene', Colors.blue),
-                  _buildSection('ocimene', Colors.pink),
-                  _buildSection('pinene', Colors.brown),
-                  _buildSection('terpinolene', Colors.orange),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
