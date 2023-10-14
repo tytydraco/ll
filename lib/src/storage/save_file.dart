@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
-const _saveFileName = 'saveFile.json';
+const _saveFileName = 'll_saved_strains.json';
 
 /// Save the strains to the save file.
 Future<void> setSavedStrains(List<Map<String, dynamic>> strains) async {
