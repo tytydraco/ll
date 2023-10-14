@@ -18,7 +18,7 @@ class CompareScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
         Flexible(
           child: DetailsScreen(strain: strainA),
