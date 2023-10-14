@@ -57,8 +57,19 @@ class _CompareScreenState extends State<CompareScreen> {
           );
         }).toList();
 
-        return Row(
-          children: pages,
+        // Responsive layout; maximize usable space.
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth > constraints.maxHeight) {
+              return Row(
+                children: pages,
+              );
+            } else {
+              return Column(
+                children: pages,
+              );
+            }
+          },
         );
       },
     ));
