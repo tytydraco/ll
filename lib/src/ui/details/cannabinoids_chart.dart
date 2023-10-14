@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:ll/src/util/string_ext.dart';
 
 /// Show the cannabinoid content.
 class CannabinoidsChart extends StatefulWidget {
@@ -46,47 +45,53 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2,
-      child: BarChart(
-        BarChartData(
-          minY: 0,
-          maxY: 30,
-          titlesData: FlTitlesData(
-            leftTitles: const AxisTitles(),
-            rightTitles: const AxisTitles(),
-            topTitles: const AxisTitles(),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                reservedSize: 30,
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  return Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      _cannabinoidsIndicies[value]!.capitalize(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  );
-                },
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: AspectRatio(
+          aspectRatio: 2,
+          child: BarChart(
+            BarChartData(
+              minY: 0,
+              maxY: 30,
+              titlesData: FlTitlesData(
+                leftTitles: const AxisTitles(),
+                rightTitles: const AxisTitles(),
+                topTitles: const AxisTitles(),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    reservedSize: 30,
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      return Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(
+                          _cannabinoidsIndicies[value]!.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              barGroups: [
+                _buildGroup('thcv', 2, Colors.red),
+                _buildGroup('cbg', 0, Colors.orange),
+                _buildGroup('cbc', -2, Colors.yellow),
+                _buildGroup('thc', 1, Colors.green),
+                _buildGroup('cbd', -1, Colors.blue),
+              ],
+              gridData: const FlGridData(
+                show: false,
+              ),
+              borderData: FlBorderData(
+                show: false,
               ),
             ),
-          ),
-          barGroups: [
-            _buildGroup('thcv', 2, Colors.red),
-            _buildGroup('cbg', 0, Colors.orange),
-            _buildGroup('cbc', -2, Colors.yellow),
-            _buildGroup('thc', 1, Colors.green),
-            _buildGroup('cbd', -1, Colors.blue),
-          ],
-          gridData: const FlGridData(
-            show: false,
-          ),
-          borderData: FlBorderData(
-            show: false,
           ),
         ),
       ),

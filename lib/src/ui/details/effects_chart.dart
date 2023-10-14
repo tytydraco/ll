@@ -67,55 +67,61 @@ class _EffectsChartState extends State<EffectsChart> {
   Widget build(BuildContext context) {
     final chartMaxY = _getChartMaxY();
 
-    return AspectRatio(
-      aspectRatio: 1,
-      child: BarChart(
-        BarChartData(
-          minY: -chartMaxY,
-          maxY: chartMaxY,
-          titlesData: FlTitlesData(
-            leftTitles: const AxisTitles(),
-            rightTitles: const AxisTitles(),
-            topTitles: const AxisTitles(),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                reservedSize: 80,
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  return RotatedBox(
-                    quarterTurns: -1,
-                    child: Text(
-                      _effectIndicies[value]!.capitalize(),
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  );
-                },
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: BarChart(
+            BarChartData(
+              minY: -chartMaxY,
+              maxY: chartMaxY,
+              titlesData: FlTitlesData(
+                leftTitles: const AxisTitles(),
+                rightTitles: const AxisTitles(),
+                topTitles: const AxisTitles(),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    reservedSize: 80,
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      return RotatedBox(
+                        quarterTurns: -1,
+                        child: Text(
+                          _effectIndicies[value]!.capitalize(),
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              barGroups: [
+                _buildGroup('aroused', -6, Colors.red),
+                _buildGroup('hungry', 1, Colors.redAccent),
+                _buildGroup('energetic', -4, Colors.orange),
+                _buildGroup('happy', 0, Colors.orangeAccent),
+                _buildGroup('creative', -5, Colors.yellow),
+                _buildGroup('giggly', -1, Colors.yellowAccent),
+                _buildGroup('uplifted', 6, Colors.lightGreen),
+                _buildGroup('focused', -2, Colors.green),
+                _buildGroup('talkative', 4, Colors.greenAccent),
+                _buildGroup('relaxed', 2, Colors.lightBlue),
+                _buildGroup('tingly', 5, Colors.blue),
+                _buildGroup('euphoric', -3, Colors.purple),
+                _buildGroup('sleepy', 3, Colors.deepPurple),
+              ],
+              gridData: const FlGridData(
+                show: false,
+              ),
+              borderData: FlBorderData(
+                show: false,
               ),
             ),
-          ),
-          barGroups: [
-            _buildGroup('aroused', -6, Colors.red),
-            _buildGroup('hungry', 1, Colors.redAccent),
-            _buildGroup('energetic', -4, Colors.orange),
-            _buildGroup('happy', 0, Colors.orangeAccent),
-            _buildGroup('creative', -5, Colors.yellow),
-            _buildGroup('giggly', -1, Colors.yellowAccent),
-            _buildGroup('uplifted', 6, Colors.lightGreen),
-            _buildGroup('focused', -2, Colors.green),
-            _buildGroup('talkative', 4, Colors.greenAccent),
-            _buildGroup('relaxed', 2, Colors.lightBlue),
-            _buildGroup('tingly', 5, Colors.blue),
-            _buildGroup('euphoric', -3, Colors.purple),
-            _buildGroup('sleepy', 3, Colors.deepPurple),
-          ],
-          gridData: const FlGridData(
-            show: false,
-          ),
-          borderData: FlBorderData(
-            show: false,
           ),
         ),
       ),
