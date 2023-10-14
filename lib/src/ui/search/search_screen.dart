@@ -145,11 +145,21 @@ class _SearchScreenState extends State<SearchScreen> {
         actions: [
           IconButton(
             onPressed: () async {
+              // Read clipboard data.
               final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
               final content = clipboard?.text;
-              if (content?.isNotEmpty ?? false) {
+
+              try {
+                // Try to show detail screen for clipboard strain.
                 final strain = jsonDecode(content!) as Map<String, dynamic>;
                 widget.onSelect?.call(strain);
+              } catch (_) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Failed to parse clipboard strain.'),
+                  ),
+                );
               }
             },
             icon: const Icon(Icons.content_paste_go),
@@ -191,7 +201,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Center(
                           child: Text('Pull to update.'),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
