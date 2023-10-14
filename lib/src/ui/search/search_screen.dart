@@ -3,8 +3,10 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ll/src/api/leafly_api.dart';
 import 'package:ll/src/storage/save_file.dart';
+import 'package:ll/src/util/strain_colors.dart';
 
 /// The search screen.
 class SearchScreen extends StatefulWidget {
@@ -96,19 +98,6 @@ class _SearchScreenState extends State<SearchScreen> {
     return filteredStrains;
   }
 
-  Color _strainColor(String? category) {
-    switch (category) {
-      case 'Indica':
-        return Colors.blue;
-      case 'Hybrid':
-        return Colors.green;
-      case 'Sativa':
-        return Colors.red;
-      default:
-        return Colors.transparent;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -141,7 +130,7 @@ class _SearchScreenState extends State<SearchScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.green, Colors.teal],
+              colors: [Colors.green, Colors.lightGreen],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -164,9 +153,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
                     return ListTile(
                       title: Text(strain['name'] as String? ?? 'N/A'),
-                      trailing: Icon(
-                        Icons.eco,
-                        color: _strainColor(strain['category'] as String?),
+                      trailing: FaIcon(
+                        FontAwesomeIcons.canadianMapleLeaf,
+                        color: getStrainColor(strain['category'] as String?),
                       ),
                       onTap: () => widget.onSelect?.call(strain),
                     );

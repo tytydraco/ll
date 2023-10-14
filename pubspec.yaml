@@ -11,13 +11,31 @@ dependencies:
   fl_chart: ^0.64.0
   flutter:
     sdk: flutter
+  font_awesome_flutter: ^10.5.0
   http: ^1.1.0
+  icons_launcher: ^2.1.4
   path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   very_good_analysis: any
+  basil:
+    git: https://github.com/tytydraco/basil
 
 flutter:
   uses-material-design: true
+
+icons_launcher:
+  image_path: "assets/icon.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    windows:
+      enable: true
+    macos:
+      enable: true
+    web:
+      enable: true

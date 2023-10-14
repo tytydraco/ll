@@ -1,6 +1,5 @@
-package com.example.ll
+package com.draco.ll
 
 import io.flutter.embedding.android.FlutterActivity
 
-class MainActivity: FlutterActivity() {
-}
+class MainActivity : FlutterActivity()

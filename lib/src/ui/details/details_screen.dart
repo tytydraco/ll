@@ -4,6 +4,7 @@ import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
+import 'package:ll/src/util/strain_colors.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// The details about the strain.
@@ -49,9 +50,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
       appBar: AppBar(
         title: Text(widget.strain['name'] as String? ?? 'N/A'),
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.green, Colors.teal],
+              colors:
+                  getStrainGradientColors(widget.strain['category'] as String?),
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
