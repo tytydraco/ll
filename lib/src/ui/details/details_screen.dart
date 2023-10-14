@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
@@ -46,7 +47,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.strain['name'] as String),
+        title: Text(widget.strain['name'] as String? ?? 'N/A'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -67,18 +68,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (__) {
-                            return Column(
-                              children: [
-                                Flexible(
-                                  child: DetailsScreen(strain: widget.strain),
-                                ),
-                                Flexible(
-                                  child: DetailsScreen(strain: otherStrain),
-                                ),
-                              ],
-                            );
-                          },
+                          builder: (__) => CompareScreen(
+                            strainA: widget.strain,
+                            strainB: otherStrain,
+                          ),
                         ),
                       );
                     },

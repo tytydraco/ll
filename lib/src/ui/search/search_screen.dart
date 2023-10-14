@@ -81,7 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
     // Filter for strains that contain the strain name or other names.
     final filteredStrains = _strains.where((rawStrain) {
       final strain = rawStrain;
-      final name = strain['name'] as String;
+      final name = strain['name'] as String? ?? 'N/A';
       final otherNames = getOtherNames(strain);
 
       if (name.toLowerCase().contains(reducedTerm)) return true;
@@ -163,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     final strain = _filteredStrains[index];
 
                     return ListTile(
-                      title: Text(strain['name'] as String),
+                      title: Text(strain['name'] as String? ?? 'N/A'),
                       trailing: Icon(
                         Icons.eco,
                         color: _strainColor(strain['category'] as String?),
@@ -179,7 +179,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     slivers: [
                       SliverFillRemaining(
                         child: Center(
-                          child: Text('Pull to fetch strains.'),
+                          child: Text('Pull to update.'),
                         ),
                       )
                     ],
