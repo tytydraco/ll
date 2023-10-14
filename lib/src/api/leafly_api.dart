@@ -18,6 +18,9 @@ Stream<Map<String, dynamic>> fetchStrains() async* {
         '&strain_playlist='
         '&take=$take',
       ),
+      headers: {
+        'Content-Type': 'text/plain',
+      },
     );
 
     // Break when server is done.
