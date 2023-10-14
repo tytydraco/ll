@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
@@ -7,6 +9,8 @@ import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_colors.dart';
 import 'package:ll/src/util/string_ext.dart';
+import 'package:share_plus/share_plus.dart';
+//import 'package:share_plus/share_plus.dart';
 
 /// The details about the strain.
 class DetailsScreen extends StatefulWidget {
@@ -47,6 +51,31 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return 'Category: $category\nPhenotype: $phenotype';
   }
 
+  Future<void> _shareStrain() async {
+    await Share.share(jsonEncode(widget.strain));
+  }
+
+  void _compareStrains() {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => SearchScreen(
+          onSelect: (otherStrain) {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (__) => CompareScreen(
+                  strainA: widget.strain,
+                  strainB: otherStrain,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,26 +93,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => SearchScreen(
-                    onSelect: (otherStrain) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (__) => CompareScreen(
-                            strainA: widget.strain,
-                            strainB: otherStrain,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
+            onPressed: _shareStrain,
+            icon: const Icon(Icons.share),
+          ),
+          IconButton(
+            onPressed: _compareStrains,
             icon: const Icon(Icons.compare),
           ),
         ],
