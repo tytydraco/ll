@@ -16,6 +16,7 @@ class LL extends StatelessWidget {
     return MaterialApp(
       title: 'LL',
       theme: primaryTheme,
+      darkTheme: primaryThemeDark,
       home: const HomeScreen(),
     );
   }
