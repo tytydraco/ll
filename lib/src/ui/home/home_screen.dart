@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Sativa':
         return Colors.red;
       default:
-        return Colors.black54;
+        return Colors.transparent;
     }
   }
 
