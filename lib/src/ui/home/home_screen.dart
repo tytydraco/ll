@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ll/src/api/leafly_api.dart';
-import 'package:ll/src/screens/details_screen.dart';
+import 'package:ll/src/ui/details/details_screen.dart';
 
 /// The home screen.
 class HomeScreen extends StatefulWidget {
@@ -68,6 +68,19 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Color _strainColor(String? category) {
+    switch (category) {
+      case 'Indica':
+        return Colors.blue;
+      case 'Hybrid':
+        return Colors.green;
+      case 'Sativa':
+        return Colors.red;
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -109,7 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return ListTile(
               title: Text(strain['name'] as String),
-              subtitle: Text(strain['averageRating'].toString()),
+              trailing: Container(
+                height: 10,
+                width: 10,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: _strainColor(strain['category'] as String?),
+                ),
+              ),
               onTap: () {
                 Navigator.push(
                   context,

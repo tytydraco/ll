@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ll/src/screens/home_screen.dart';
 import 'package:ll/src/themes.dart';
+import 'package:ll/src/ui/home/home_screen.dart';
 
 void main() {
   runApp(const LL());
