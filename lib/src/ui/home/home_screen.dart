@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -16,8 +17,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _strains = <Map<String, dynamic>>[];
-  List<dynamic>? _filteredStrains;
+  /// Strain objects sorted by ID number in ascending order.
+  final _strains = SplayTreeSet<Map<String, dynamic>>((key1, key2) {
+    return (key1['id'] as int).compareTo(key2['id'] as int);
+  });
+
+  var _filteredStrains = <Map<String, dynamic>>[];
+
   final _searchController = TextEditingController();
 
   Future<void> _loadSavedStrains() async {
@@ -44,17 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // Update the save file.
-    await setSavedStrains(_strains);
+    await setSavedStrains(_strains.toList());
   }
 
-  Future<void> _filterStrains(String searchTerm) async {
-    if (searchTerm == '') {
-      setState(() {
-        _filteredStrains = null;
-      });
-
-      return;
-    }
+  List<Map<String, dynamic>> _filterStrains(String searchTerm) {
+    if (searchTerm == '') return [];
 
     List<String> getOtherNames(Map<String, dynamic> strain) {
       final otherNamesRaw = strain['subtitle'] as String?;
@@ -86,9 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return false;
     }).toList();
 
-    setState(() {
-      _filteredStrains = filteredStrains;
-    });
+    return filteredStrains;
   }
 
   Color _strainColor(String? category) {
@@ -112,7 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final strains = (_filteredStrains != null) ? _filteredStrains! : _strains;
+    if (_searchController.text.isEmpty) {
+      _filteredStrains = _strains.toList();
+    } else {
+      _filteredStrains = _filterStrains(_searchController.text);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -125,7 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
             hintStyle: TextStyle(color: Colors.white54),
             border: InputBorder.none,
           ),
-          onChanged: _filterStrains,
+          onChanged: (value) {
+            setState(() {});
+          },
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -146,10 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
               PointerDeviceKind.mouse,
             },
           ),
-          child: strains.isNotEmpty
+          child: _filteredStrains.isNotEmpty
               ? ListView.separated(
                   itemBuilder: (context, index) {
-                    final strain = strains[index] as Map<String, dynamic>;
+                    final strain = _filteredStrains[index];
 
                     return ListTile(
                       title: Text(strain['name'] as String),
@@ -168,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   separatorBuilder: (_, __) => const Divider(),
-                  itemCount: strains.length,
+                  itemCount: _filteredStrains.length,
                 )
               : const Center(
                   child: CustomScrollView(
