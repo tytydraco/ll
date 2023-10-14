@@ -17,9 +17,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  /// Strain objects sorted by ID number in ascending order.
+  /// Strain objects sorted by name number in ascending order.
   final _strains = SplayTreeSet<Map<String, dynamic>>((key1, key2) {
-    return (key1['id'] as int).compareTo(key2['id'] as int);
+    return (key1['name'] as String)
+        .toLowerCase()
+        .compareTo((key2['name'] as String).toLowerCase());
   });
 
   var _filteredStrains = <Map<String, dynamic>>[];
