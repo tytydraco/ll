@@ -21,11 +21,8 @@ class _TerpeneChartState extends State<TerpeneChart> {
   late final _terps = widget.strain['terps'] as Map<String, dynamic>;
 
   PieChartSectionData _buildSection(String effect, Color color) {
-    final title = (_terps[effect]['score'] as double).toStringAsFixed(2);
-
     return PieChartSectionData(
-      showTitle: true,
-      title: title,
+      showTitle: false,
       color: color,
       badgePositionPercentageOffset: 2,
       badgeWidget: Text(

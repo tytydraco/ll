@@ -12,14 +12,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _strains = <dynamic>[];
+  final _strains = <Map<String, dynamic>>[];
   List<dynamic>? _filteredStrains;
   final _searchController = TextEditingController();
 
   Future<void> _updateStrains() async {
     await for (final strain in fetchStrains()) {
       setState(() {
-        _strains.add(strain);
+        _strains.add(strain as Map<String, dynamic>);
       });
     }
   }
@@ -114,31 +114,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: _updateStrains,
-        child: ListView.separated(
-          itemBuilder: (context, index) {
-            final strain = strains[index] as Map<String, dynamic>;
+      body: ListView.separated(
+        itemBuilder: (context, index) {
+          final strain = strains[index] as Map<String, dynamic>;
 
-            return ListTile(
-              title: Text(strain['name'] as String),
-              trailing: Icon(
-                Icons.eco,
-                color: _strainColor(strain['category'] as String?),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (context) => DetailsScreen(strain: strain),
-                  ),
-                );
-              },
-            );
-          },
-          separatorBuilder: (_, __) => const Divider(),
-          itemCount: strains.length,
-        ),
+          return ListTile(
+            title: Text(strain['name'] as String),
+            trailing: Icon(
+              Icons.eco,
+              color: _strainColor(strain['category'] as String?),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => DetailsScreen(strain: strain),
+                ),
+              );
+            },
+          );
+        },
+        separatorBuilder: (_, __) => const Divider(),
+        itemCount: strains.length,
       ),
     );
   }

@@ -4,10 +4,10 @@ import 'package:http/http.dart';
 
 /// Generate all the strains from Leafly.
 Stream<dynamic> fetchStrains() async* {
-  final strains = <dynamic>[];
-
   const take = 20;
   var skip = 0;
+
+  final fetchedIds = <int>{};
 
   while (true) {
     final req = await get(
@@ -25,9 +25,15 @@ Stream<dynamic> fetchStrains() async* {
 
     final json = jsonDecode(req.body) as Map<String, dynamic>;
     final hits = json['hits'] as Map<String, dynamic>;
-    final strain = hits['strain'] as List<dynamic>;
+    final strains = hits['strain'] as List<dynamic>;
 
-    yield* Stream.fromIterable(strain);
+    for (final strain in strains) {
+      final id = strain['id'] as int;
+      if (!fetchedIds.contains(id)) {
+        fetchedIds.add(id);
+        yield strain;
+      }
+    }
 
     skip += take;
   }
