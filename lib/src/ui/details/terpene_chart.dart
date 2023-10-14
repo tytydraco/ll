@@ -21,6 +21,10 @@ class _TerpeneChartState extends State<TerpeneChart> {
   late final _terps = widget.strain['terps'] as Map<String, dynamic>;
 
   PieChartSectionData _buildSection(String effect, Color color) {
+    final score = (_terps[effect] != null && _terps[effect]['score'] != null)
+        ? _terps[effect]['score'] as double
+        : 0.0;
+
     return PieChartSectionData(
       showTitle: false,
       color: color,
@@ -32,7 +36,7 @@ class _TerpeneChartState extends State<TerpeneChart> {
           fontSize: 12,
         ),
       ),
-      value: _terps[effect]['score'] as double,
+      value: score,
     );
   }
 

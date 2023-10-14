@@ -32,11 +32,16 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
     int x,
     Color color,
   ) {
+    final score = (_cannabinoids[cannabinoid] != null &&
+            _cannabinoids[cannabinoid]['percentile50'] != null)
+        ? _cannabinoids[cannabinoid]['percentile50'] as double
+        : 0.0;
+
     return BarChartGroupData(
       x: x,
       barRods: [
         BarChartRodData(
-          toY: _cannabinoids[cannabinoid]['percentile50'] as double,
+          toY: score,
           color: color,
         ),
       ],

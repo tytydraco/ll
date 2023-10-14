@@ -98,7 +98,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
             (widget.strain['shortDescriptionPlain'] as String?) ?? 'N/A',
           ),
           const Divider(),
-          _paramTile('Main effect', widget.strain['topEffect']),
+          _paramTile(
+            'Main effect',
+            (widget.strain['topEffect'] as String?) ?? 'N/A',
+          ),
           const Divider(),
           _paramTile(
             'Other names',
@@ -107,19 +110,33 @@ class _DetailsScreenState extends State<DetailsScreen> {
           const Divider(),
           _paramTile(
             'Average rating',
-            (widget.strain['averageRating'] as double).toStringAsFixed(2),
+            (widget.strain['averageRating'] as double? ?? -1)
+                .toStringAsFixed(2),
           ),
           const Divider(),
-          _paramTile('Ratings', widget.strain['reviewCount']),
+          _paramTile(
+            'Ratings',
+            (widget.strain['reviewCount'] != null)
+                ? widget.strain['reviewCount'] as int
+                : 'N/A',
+          ),
           const Divider(),
-          _paramTile('Category', _getCategory()),
+          _paramTile(
+            'Category',
+            _getCategory(),
+          ),
           const Divider(),
           _paramTile(
             'Average THC content',
-            '${(widget.strain['thc'] as double).round()}%',
+            (widget.strain['thc'] != null)
+                ? '${(widget.strain['thc'] as double).round()}%'
+                : 'N/A',
           ),
           const Divider(),
-          _paramTile('Main terpene', widget.strain['strainTopTerp']),
+          _paramTile(
+            'Main terpene',
+            widget.strain['strainTopTerp'] as String? ?? 'N/A',
+          ),
           const Divider(),
           TerpeneChart(strain: widget.strain),
           const Divider(),

@@ -43,8 +43,12 @@ class _EffectsChartState extends State<EffectsChart> {
     int x,
     Color color,
   ) {
-    final roundedValue =
-        double.parse((_effects[effect]['score'] as double).toStringAsFixed(2));
+    final score =
+        (_effects[effect] != null && _effects[effect]['score'] != null)
+            ? _effects[effect]['score'] as double
+            : 0.0;
+
+    final roundedValue = double.parse(score.toStringAsFixed(2));
 
     return BarChartGroupData(
       x: x,
