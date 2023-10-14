@@ -23538,7 +23538,7 @@ _.a=a
 _.b=b
 _.c=c
 _.d=d},
-aG5(a,b){return A.aii(new A.aiK(a,b),t.Wd)},
+aG5(a){return A.aii(new A.aiK(a,null),t.Wd)},
 aii(a,b){return A.aEQ(a,b,b)},
 aEQ(a,b,c){var s=0,r=A.a5(c),q,p=2,o,n=[],m,l
 var $async$aii=A.a0(function(d,e){if(d===1){o=e
@@ -24356,31 +24356,31 @@ Va(){var $async$Va=A.a0(function(a,b){switch(a){case 2:n=q
 s=n.pop()
 break
 case 1:o=b
-s=p}while(true)switch(s){case 0:e=A.aV(t.S)
-m=t.P,l=t.j,k=t.N,j=0
+s=p}while(true)switch(s){case 0:f=A.aV(t.S)
+m=t.P,l=t.j,k=0
 case 3:if(!!0){s=4
 break}s=5
-return A.ahw(A.aG5(A.j4("https://consumer-api.leafly.com/api/strain_playlists/v2?enableNewFilters=false&skip="+j+"&strain_playlist=&take=20"),A.aJ(["Content-Type","text/plain"],k,k)),$async$Va,r)
-case 5:i=b
-if(i.b!==200){s=4
-break}h=J.ao(l.a(J.ac(m.a(J.ac(m.a(B.bE.CJ(0,A.aFM(A.aDA(i.e).c.a.h(0,"charset")).f2(0,i.w),null)),"hits")),"strain")))
-case 6:if(!h.t()){s=7
-break}g=h.gF(h)
-f=A.d9(J.ac(g,"id"))
-s=!e.B(0,f)?8:9
+return A.ahw(A.aG5(A.j4("https://consumer-api.leafly.com/api/strain_playlists/v2?enableNewFilters=false&skip="+k+"&strain_playlist=&take=20")),$async$Va,r)
+case 5:j=b
+if(j.b!==200){s=4
+break}i=J.ao(l.a(J.ac(m.a(J.ac(m.a(B.bE.CJ(0,A.aFM(A.aDA(j.e).c.a.h(0,"charset")).f2(0,j.w),null)),"hits")),"strain")))
+case 6:if(!i.t()){s=7
+break}h=i.gF(i)
+g=A.d9(J.ac(h,"id"))
+s=!f.B(0,g)?8:9
 break
-case 8:e.H(0,f)
+case 8:f.H(0,g)
 s=10
 q=[1]
-return A.ahw(A.aCh(m.a(g)),$async$Va,r)
+return A.ahw(A.aCh(m.a(h)),$async$Va,r)
 case 10:case 9:s=6
 break
-case 7:j+=20
+case 7:k+=20
 s=3
 break
 case 4:case 1:return A.ahw(null,0,r)
 case 2:return A.ahw(o,1,r)}})
-var s=0,r=A.aEq($async$Va,t.P),q,p=2,o,n=[],m,l,k,j,i,h,g,f,e
+var s=0,r=A.aEq($async$Va,t.P),q,p=2,o,n=[],m,l,k,j,i,h,g,f
 return A.aEE(r)},
 Vg(a){var s=0,r=A.a5(t.H),q
 var $async$Vg=A.a0(function(b,c){if(b===1)return A.a2(c,r)
@@ -75999,7 +75999,6 @@ uK(a,b,c){return this.a6x(a,b,c)},
 a6x(a,b,c){var s=0,r=A.a5(t.Wd),q,p=this,o,n
 var $async$uK=A.a0(function(d,e){if(d===1)return A.a2(e,r)
 while(true)switch(s){case 0:o=A.aAo(a,b)
-o.r.V(0,c)
 n=A
 s=3
 return A.a1(p.fQ(0,o),$async$uK)
