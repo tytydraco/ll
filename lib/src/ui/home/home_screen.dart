@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _filterStrains(String searchTerm) async {
+  Future<void> _filterStrains(String searchTerm) async {
     if (searchTerm == '') {
       setState(() {
         _filteredStrains = null;
