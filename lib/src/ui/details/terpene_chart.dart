@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// Show the terpene content.
@@ -18,19 +19,17 @@ class TerpeneChart extends StatefulWidget {
 }
 
 class _TerpeneChartState extends State<TerpeneChart> {
-  late final _terps = widget.strain['terps'] as Map<String, dynamic>;
+  late final _strainSafe = SafeJson(widget.strain);
 
-  PieChartSectionData _buildSection(String effect, Color color) {
-    final score = (_terps[effect] != null && _terps[effect]['score'] != null)
-        ? _terps[effect]['score'] as double
-        : 0.0;
+  PieChartSectionData _buildSection(String terpene, Color color) {
+    final score = _strainSafe.to('terps').to(terpene).get<double>('score') ?? 0;
 
     return PieChartSectionData(
       showTitle: false,
       color: color,
       badgePositionPercentageOffset: 2,
       badgeWidget: Text(
-        effect.capitalize(),
+        terpene.capitalize(),
         textAlign: TextAlign.center,
         style: const TextStyle(
           fontSize: 12,

@@ -4,6 +4,7 @@ import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
+import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_colors.dart';
 import 'package:ll/src/util/string_ext.dart';
 
@@ -23,6 +24,8 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
+  late final _strainSafe = SafeJson(widget.strain);
+
   Widget _paramTile(String title, dynamic content) {
     final formattedContent = content.toString().capitalize();
 
@@ -33,8 +36,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   String _getCategory() {
-    final category = widget.strain['category'] as String?;
-    final phenotype = widget.strain['phenotype'] as String?;
+    final category = _strainSafe.get<String>('category');
+    final phenotype = _strainSafe.get<String>('phenotype');
 
     if (category == null && phenotype != null) return phenotype;
     if (category != null && phenotype == null) return category;
@@ -48,12 +51,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.strain['name'] as String? ?? 'N/A'),
+        title: Text(_strainSafe.get<String>('name') ?? 'N/A'),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors:
-                  getStrainGradientColors(widget.strain['category'] as String?),
+                  getStrainGradientColors(_strainSafe.get<String>('category')),
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -90,31 +93,25 @@ class _DetailsScreenState extends State<DetailsScreen> {
           //Image.network(widget.strain['nugImage'] as String),
           _paramTile(
             'Description',
-            (widget.strain['shortDescriptionPlain'] as String?) ?? 'N/A',
+            (_strainSafe.get<String>('shortDescriptionPlain')) ?? 'N/A',
           ),
           const Divider(),
           _paramTile(
             'Main effect',
-            (widget.strain['topEffect'] as String?) ?? 'N/A',
+            (_strainSafe.get<String>('topEffect')) ?? 'N/A',
           ),
           const Divider(),
           _paramTile(
             'Other names',
-            (widget.strain['subtitle'] as String?) ?? 'N/A',
+            (_strainSafe.get<String>('subtitle')) ?? 'N/A',
           ),
           const Divider(),
           _paramTile(
             'Average rating',
-            (widget.strain['averageRating'] as double? ?? -1)
-                .toStringAsFixed(2),
+            (_strainSafe.get<double>('averageRating') ?? -1).toStringAsFixed(2),
           ),
           const Divider(),
-          _paramTile(
-            'Ratings',
-            (widget.strain['reviewCount'] != null)
-                ? widget.strain['reviewCount'] as int
-                : 'N/A',
-          ),
+          _paramTile('Ratings', _strainSafe.get<int>('reviewCount') ?? 'N/A'),
           const Divider(),
           _paramTile(
             'Category',
@@ -123,14 +120,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
           const Divider(),
           _paramTile(
             'Average THC content',
-            (widget.strain['thc'] != null)
-                ? '${(widget.strain['thc'] as double).round()}%'
+            (_strainSafe.get<double>('thc') != null)
+                ? '${_strainSafe.get<double>('thc')?.round()}%'
                 : 'N/A',
           ),
           const Divider(),
           _paramTile(
             'Main terpene',
-            widget.strain['strainTopTerp'] as String? ?? 'N/A',
+            _strainSafe.get<String>('strainTopTerp') ?? 'N/A',
           ),
           const Divider(),
           TerpeneChart(strain: widget.strain),

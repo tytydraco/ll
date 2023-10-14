@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// Show the effects.
@@ -20,7 +21,7 @@ class EffectsChart extends StatefulWidget {
 }
 
 class _EffectsChartState extends State<EffectsChart> {
-  late final _effects = widget.strain['effects'] as Map<String, dynamic>;
+  late final _strainSafe = SafeJson(widget.strain);
 
   final _effectIndicies = <int, String>{
     -6: 'aroused',
@@ -44,9 +45,7 @@ class _EffectsChartState extends State<EffectsChart> {
     Color color,
   ) {
     final score =
-        (_effects[effect] != null && _effects[effect]['score'] != null)
-            ? _effects[effect]['score'] as double
-            : 0.0;
+        _strainSafe.to('effects').to(effect).get<double>('score') ?? 0;
 
     final roundedValue = double.parse(score.toStringAsFixed(2));
 
@@ -61,15 +60,18 @@ class _EffectsChartState extends State<EffectsChart> {
     );
   }
 
-  double _getChartMaxY() {
+  double _getChartMaxMagnitude() {
     return _effectIndicies.values
-        .map((e) => _effects[e]['score'] as double)
+        .map(
+          (e) =>
+              _strainSafe.to('effects').to(e).get<double>('score')?.abs() ?? 0,
+        )
         .reduce(max);
   }
 
   @override
   Widget build(BuildContext context) {
-    final chartMaxY = _getChartMaxY();
+    final chartMaxY = _getChartMaxMagnitude();
 
     return Card(
       margin: const EdgeInsets.all(16),

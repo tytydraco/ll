@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ll/src/api/leafly_api.dart';
 import 'package:ll/src/storage/save_file.dart';
+import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_colors.dart';
 
 /// The search screen.
@@ -26,13 +27,15 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   /// Strain objects sorted by name number in ascending order.
   final _strains = SplayTreeSet<Map<String, dynamic>>((key1, key2) {
-    return (key1['name'] as String)
+    final strainSafe1 = SafeJson(key1);
+    final strainSafe2 = SafeJson(key2);
+
+    return (strainSafe1.get<String>('name') ?? 'N/A')
         .toLowerCase()
-        .compareTo((key2['name'] as String).toLowerCase());
+        .compareTo((strainSafe2.get<String>('name') ?? 'N/A').toLowerCase());
   });
 
   var _filteredStrains = <Map<String, dynamic>>[];
-
   final _searchController = TextEditingController();
 
   Future<void> _loadSavedStrains() async {
@@ -66,7 +69,8 @@ class _SearchScreenState extends State<SearchScreen> {
     if (searchTerm == '') return [];
 
     List<String> getOtherNames(Map<String, dynamic> strain) {
-      final otherNamesRaw = strain['subtitle'] as String?;
+      final strainSafe = SafeJson(strain);
+      final otherNamesRaw = strainSafe.get<String>('subtitle');
 
       // No other names...
       if (otherNamesRaw == null) return [];
@@ -81,9 +85,9 @@ class _SearchScreenState extends State<SearchScreen> {
     final reducedTerm = searchTerm.toLowerCase();
 
     // Filter for strains that contain the strain name or other names.
-    final filteredStrains = _strains.where((rawStrain) {
-      final strain = rawStrain;
-      final name = strain['name'] as String? ?? 'N/A';
+    final filteredStrains = _strains.where((strain) {
+      final strainSafe = SafeJson(strain);
+      final name = strainSafe.get<String>('name') ?? 'N/A';
       final otherNames = getOtherNames(strain);
 
       if (name.toLowerCase().contains(reducedTerm)) return true;
@@ -150,12 +154,14 @@ class _SearchScreenState extends State<SearchScreen> {
               ? ListView.separated(
                   itemBuilder: (context, index) {
                     final strain = _filteredStrains[index];
+                    final strainSafe = SafeJson(strain);
 
                     return ListTile(
-                      title: Text(strain['name'] as String? ?? 'N/A'),
+                      title: Text(strainSafe.get<String>('name') ?? 'N/A'),
                       trailing: FaIcon(
                         FontAwesomeIcons.canadianMapleLeaf,
-                        color: getStrainColor(strain['category'] as String?),
+                        color:
+                            getStrainColor(strainSafe.get<String>('category')),
                       ),
                       onTap: () => widget.onSelect?.call(strain),
                     );

@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:ll/src/util/safe_json.dart';
 
 /// Show the cannabinoid content.
 class CannabinoidsChart extends StatefulWidget {
@@ -17,8 +18,8 @@ class CannabinoidsChart extends StatefulWidget {
 }
 
 class _CannabinoidsChartState extends State<CannabinoidsChart> {
-  late final _cannabinoids =
-      widget.strain['cannabinoids'] as Map<String, dynamic>;
+  late final _strainSafe = SafeJson(widget.strain);
+
   final _cannabinoidsIndicies = <int, String>{
     -2: 'cbc',
     -1: 'cbd',
@@ -32,10 +33,11 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
     int x,
     Color color,
   ) {
-    final score = (_cannabinoids[cannabinoid] != null &&
-            _cannabinoids[cannabinoid]['percentile50'] != null)
-        ? _cannabinoids[cannabinoid]['percentile50'] as double
-        : 0.0;
+    final score = _strainSafe
+            .to('cannabinoids')
+            .to(cannabinoid)
+            .get<double>('percentile50') ??
+        0;
 
     return BarChartGroupData(
       x: x,
