@@ -5,11 +5,11 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ll/src/api/leafly_api.dart';
 import 'package:ll/src/storage/save_file.dart';
+import 'package:ll/src/ui/compare/compare_screen.dart';
+import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/safe_json.dart';
-import 'package:ll/src/util/strain_colors.dart';
 
 /// The search screen.
 class SearchScreen extends StatefulWidget {
@@ -104,6 +104,15 @@ class _SearchScreenState extends State<SearchScreen> {
     return filteredStrains;
   }
 
+  void _compareStrains() {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => const CompareScreen(),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -144,6 +153,10 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         actions: [
           IconButton(
+            onPressed: _compareStrains,
+            icon: const Icon(Icons.compare),
+          ),
+          IconButton(
             onPressed: () async {
               // Read clipboard data.
               final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
@@ -179,16 +192,9 @@ class _SearchScreenState extends State<SearchScreen> {
               ? ListView.separated(
                   itemBuilder: (context, index) {
                     final strain = _filteredStrains[index];
-                    final strainSafe = SafeJson(strain);
-
-                    return ListTile(
-                      title: Text(strainSafe.get<String>('name') ?? 'N/A'),
-                      trailing: FaIcon(
-                        FontAwesomeIcons.canadianMapleLeaf,
-                        color:
-                            getStrainColor(strainSafe.get<String>('category')),
-                      ),
-                      onTap: () => widget.onSelect?.call(strain),
+                    return StrainListTile(
+                      strain: strain,
+                      onSelect: widget.onSelect,
                     );
                   },
                   separatorBuilder: (_, __) => const Divider(),

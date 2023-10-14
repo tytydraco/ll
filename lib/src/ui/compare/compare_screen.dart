@@ -1,32 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
+import 'package:ll/src/ui/search/search_screen.dart';
+import 'package:ll/src/ui/strain_list_tile.dart';
 
 /// Compare two strains.
-class CompareScreen extends StatelessWidget {
+class CompareScreen extends StatefulWidget {
   /// Creates a new [CompareScreen].
   const CompareScreen({
     super.key,
-    required this.strainA,
-    required this.strainB,
   });
 
-  /// The first strain.
-  final Map<String, dynamic> strainA;
+  @override
+  State<CompareScreen> createState() => _CompareScreenState();
+}
 
-  /// The second strain.
-  final Map<String, dynamic> strainB;
+class _CompareScreenState extends State<CompareScreen> {
+  final _strains = <Map<String, dynamic>>[];
+
+  Future<void> _addStrain() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => SearchScreen(
+          onSelect: (strain) {
+            Navigator.pop(context);
+            setState(() {
+              _strains.add(strain);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _compare() async {
+    if (_strains.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nothing to compare.'),
+        ),
+      );
+      return;
+    }
+
+    await Navigator.push(context, MaterialPageRoute<void>(
+      builder: (context) {
+        final pages = _strains.asMap().entries.map((e) {
+          final index = e.key;
+          final strain = e.value;
+
+          return Flexible(
+            child: DetailsScreen(
+              strain: strain,
+              showBack: index == 0,
+            ),
+          );
+        }).toList();
+
+        return Row(
+          children: pages,
+        );
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Flexible(
-          child: DetailsScreen(strain: strainA),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Compare'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green, Colors.lightGreen],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
-        Flexible(
-          child: DetailsScreen(strain: strainB),
-        ),
-      ],
+        actions: [
+          IconButton(
+            onPressed: _addStrain,
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _compare,
+        child: const Icon(Icons.compare),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: _strains.isNotEmpty
+          ? ListView.separated(
+              itemBuilder: (context, index) {
+                final strain = _strains[index];
+                return StrainListTile(
+                  strain: strain,
+                  leading: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _strains.removeAt(index);
+                      });
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                );
+              },
+              separatorBuilder: (_, __) => const Divider(),
+              itemCount: _strains.length,
+            )
+          : const Center(
+              child: Text('Add strains to compare.'),
+            ),
     );
   }
 }

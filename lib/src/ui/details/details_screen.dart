@@ -2,27 +2,28 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/notes_area.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
-import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_colors.dart';
 import 'package:ll/src/util/string_ext.dart';
-//import 'package:share_plus/share_plus.dart';
 
 /// The details about the strain.
 class DetailsScreen extends StatefulWidget {
   /// Creates a new [DetailsScreen].
   const DetailsScreen({
     required this.strain,
+    this.showBack = true,
     super.key,
   });
 
   /// The strain JSON.
   final Map<String, dynamic> strain;
+
+  /// Show the back button.
+  final bool showBack;
 
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
@@ -58,31 +59,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  void _compareStrains() {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => SearchScreen(
-          onSelect: (otherStrain) {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (__) => CompareScreen(
-                  strainA: widget.strain,
-                  strainB: otherStrain,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: widget.showBack,
         title: Text(_strainSafe.get<String>('name') ?? 'N/A'),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -98,10 +79,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
           IconButton(
             onPressed: _copyStrainData,
             icon: const Icon(Icons.copy),
-          ),
-          IconButton(
-            onPressed: _compareStrains,
-            icon: const Icon(Icons.compare),
           ),
         ],
       ),
