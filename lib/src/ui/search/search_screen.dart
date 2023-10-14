@@ -1,8 +1,10 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ll/src/api/leafly_api.dart';
 import 'package:ll/src/storage/save_file.dart';
@@ -140,6 +142,19 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
+              final content = clipboard?.text;
+              if (content?.isNotEmpty ?? false) {
+                final strain = jsonDecode(content!) as Map<String, dynamic>;
+                widget.onSelect?.call(strain);
+              }
+            },
+            icon: const Icon(Icons.content_paste_go),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _updateStrains,

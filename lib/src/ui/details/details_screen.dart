@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
@@ -9,7 +10,6 @@ import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_colors.dart';
 import 'package:ll/src/util/string_ext.dart';
-import 'package:share_plus/share_plus.dart';
 //import 'package:share_plus/share_plus.dart';
 
 /// The details about the strain.
@@ -51,8 +51,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return 'Category: $category\nPhenotype: $phenotype';
   }
 
-  Future<void> _shareStrain() async {
-    await Share.share(jsonEncode(widget.strain));
+  Future<void> _copyStrainData() async {
+    await Clipboard.setData(
+      ClipboardData(text: jsonEncode(widget.strain)),
+    );
   }
 
   void _compareStrains() {
@@ -93,8 +95,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _shareStrain,
-            icon: const Icon(Icons.share),
+            onPressed: _copyStrainData,
+            icon: const Icon(Icons.copy),
           ),
           IconButton(
             onPressed: _compareStrains,
