@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
+import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// The details about the strain.
@@ -55,6 +56,39 @@ class _DetailsScreenState extends State<DetailsScreen> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => SearchScreen(
+                    onSelect: (otherStrain) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (__) {
+                            return Column(
+                              children: [
+                                Flexible(
+                                  child: DetailsScreen(strain: widget.strain),
+                                ),
+                                Flexible(
+                                  child: DetailsScreen(strain: otherStrain),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.compare),
+          ),
+        ],
       ),
       body: ListView(
         children: [
