@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
+import 'package:ll/src/ui/details/notes_area.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/util/safe_json.dart';
@@ -151,6 +152,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
           EffectsChart(strain: widget.strain),
           const Divider(),
           CannabinoidsChart(strain: widget.strain),
+          const Divider(),
+          if (_strainSafe.get<String>('name') != null)
+            NotesArea(strainName: _strainSafe.get<String>('name')!)
         ],
       ),
     );
