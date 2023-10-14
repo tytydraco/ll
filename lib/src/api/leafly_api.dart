@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 /// Generate all the strains from Leafly.
-Stream<dynamic> fetchStrains() async* {
+Stream<Map<String, dynamic>> fetchStrains() async* {
   const take = 20;
   var skip = 0;
 
@@ -31,7 +31,7 @@ Stream<dynamic> fetchStrains() async* {
       final id = strain['id'] as int;
       if (!fetchedIds.contains(id)) {
         fetchedIds.add(id);
-        yield strain;
+        yield strain as Map<String, dynamic>;
       }
     }
 

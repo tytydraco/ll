@@ -1,5 +1,9 @@
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ll/src/api/leafly_api.dart';
+import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 
 /// The home screen.
@@ -16,12 +20,31 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic>? _filteredStrains;
   final _searchController = TextEditingController();
 
-  Future<void> _updateStrains() async {
-    await for (final strain in fetchStrains()) {
+  Future<void> _loadSavedStrains() async {
+    // Get strains to contents of save file.
+    final savedStrains = await getSavedStrains();
+    if (savedStrains.isNotEmpty) {
       setState(() {
-        _strains.add(strain as Map<String, dynamic>);
+        _strains
+          ..clear()
+          ..addAll(savedStrains);
       });
     }
+  }
+
+  Future<void> _updateStrains() async {
+    // Fetch from the web.
+    _strains.clear();
+    await for (final strain in fetchStrains()) {
+      setState(() {
+        _strains.add(strain);
+      });
+
+      if (kDebugMode) print('Strains: ${_strains.length}');
+    }
+
+    // Update the save file.
+    await setSavedStrains(_strains);
   }
 
   Future<void> _filterStrains(String searchTerm) async {
@@ -50,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Filter for strains that contain the strain name or other names.
     final filteredStrains = _strains.where((rawStrain) {
-      final strain = rawStrain as Map<String, dynamic>;
+      final strain = rawStrain;
       final name = strain['name'] as String;
       final otherNames = getOtherNames(strain);
 
@@ -84,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _updateStrains();
+    _loadSavedStrains();
   }
 
   @override
@@ -114,28 +137,51 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: ListView.separated(
-        itemBuilder: (context, index) {
-          final strain = strains[index] as Map<String, dynamic>;
-
-          return ListTile(
-            title: Text(strain['name'] as String),
-            trailing: Icon(
-              Icons.eco,
-              color: _strainColor(strain['category'] as String?),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => DetailsScreen(strain: strain),
-                ),
-              );
+      body: RefreshIndicator(
+        onRefresh: _updateStrains,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
             },
-          );
-        },
-        separatorBuilder: (_, __) => const Divider(),
-        itemCount: strains.length,
+          ),
+          child: strains.isNotEmpty
+              ? ListView.separated(
+                  itemBuilder: (context, index) {
+                    final strain = strains[index] as Map<String, dynamic>;
+
+                    return ListTile(
+                      title: Text(strain['name'] as String),
+                      trailing: Icon(
+                        Icons.eco,
+                        color: _strainColor(strain['category'] as String?),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) => DetailsScreen(strain: strain),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemCount: strains.length,
+                )
+              : const Center(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: Text('Pull to fetch strains.'),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+        ),
       ),
     );
   }
