@@ -55,6 +55,15 @@ class _MergeScreenState extends State<MergeScreen> {
       return;
     }
 
+    if (_strains.length == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Need at least two strains.'),
+        ),
+      );
+      return;
+    }
+
     final mergeStrain = StrainMerge(strains: _strains).merge();
 
     await Navigator.push(

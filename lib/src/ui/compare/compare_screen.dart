@@ -54,6 +54,15 @@ class _CompareScreenState extends State<CompareScreen> {
       return;
     }
 
+    if (_strains.length == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Need at least two strains.'),
+        ),
+      );
+      return;
+    }
+
     await Navigator.push(
       context,
       MaterialPageRoute<void>(
