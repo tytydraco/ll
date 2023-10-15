@@ -47,7 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
 
   Future<void> _loadSavedStrains() async {
-    // Get strains to contents of save file.
+    // Set strains to contents of save file.
     final savedStrains = await getSavedStrains();
     if (savedStrains.isNotEmpty) {
       setState(() {
