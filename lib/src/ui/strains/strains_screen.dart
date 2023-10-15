@@ -69,6 +69,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
   List<Map<String, dynamic>> _filterStrains(String searchTerm) {
     if (searchTerm == '') return [];
 
+    // Account for other names.
     List<String> getOtherNames(Map<String, dynamic> strain) {
       final strainSafe = SafeJson(strain);
       final otherNamesRaw = strainSafe.get<String>('subtitle');
@@ -88,11 +89,13 @@ class _StrainsScreenState extends State<StrainsScreen> {
     // Filter for strains that contain the strain name or other names.
     final filteredStrains = _strains.where((strain) {
       final strainSafe = SafeJson(strain);
-      final name = strainSafe.get<String>('name') ?? 'N/A';
-      final otherNames = getOtherNames(strain);
 
+      // Search by name...
+      final name = strainSafe.get<String>('name') ?? 'N/A';
       if (name.toLowerCase().contains(reducedTerm)) return true;
 
+      // Search by other names...
+      final otherNames = getOtherNames(strain);
       for (final otherName in otherNames) {
         if (otherName.toLowerCase().contains(reducedTerm)) return true;
       }
