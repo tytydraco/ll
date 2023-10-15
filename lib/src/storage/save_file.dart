@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:ll/src/util/safe_json.dart';
+import 'package:ll/src/data/strain.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,7 +9,7 @@ const _saveFileName = 'll_saved_strains.json';
 final _directory = getApplicationCacheDirectory();
 
 /// Save the strains to the save file.
-Future<void> setSavedStrains(List<Map<String, dynamic>> strains) async {
+Future<void> setSavedStrains(List<Strain> strains) async {
   final directory = await _directory;
 
   final saveFile = File('${directory.path}/$_saveFileName');
@@ -17,7 +17,7 @@ Future<void> setSavedStrains(List<Map<String, dynamic>> strains) async {
 }
 
 /// Fetch the strains from the save file.
-Future<List<Map<String, dynamic>>> getSavedStrains() async {
+Future<List<Strain>> getSavedStrains() async {
   final directory = await _directory;
 
   final saveFile = File('${directory.path}/$_saveFileName');
@@ -26,40 +26,36 @@ Future<List<Map<String, dynamic>>> getSavedStrains() async {
   final saveFileContents = await saveFile.readAsString();
   final saveFileJson = jsonDecode(saveFileContents) as List<dynamic>;
 
-  return saveFileJson.cast<Map<String, dynamic>>().toList();
+  return saveFileJson
+      .cast<Map<String, dynamic>>()
+      .map(Strain.fromJson)
+      .toList();
 }
 
 /// Save a strain to the save file.
-Future<void> addSavedStrain(Map<String, dynamic> strain) async {
+Future<void> addSavedStrain(Strain strain) async {
   final savedStrains = await getSavedStrains();
   savedStrains.add(strain);
   await setSavedStrains(savedStrains);
 }
 
 /// Fetch saved strains given the strain names.
-Future<List<Map<String, dynamic>>> getSavedStrainsByName(
-  List<String> strainNames,
-) async {
+Future<List<Strain>> getSavedStrainsByName(List<String> strainNames) async {
   final savedStrains = await getSavedStrains();
-  final strains = savedStrains.where((strain) {
-    final strainSafe = SafeJson(strain);
-    final strainName = strainSafe.get<String>('name') ?? 'N/A';
-    return strainNames.contains(strainName);
-  }).toList();
+  final strains = savedStrains
+      .where((strain) => strainNames.contains(strain.name ?? 'N/A'))
+      .toList();
 
   return strains;
 }
 
 /// Fetch saved strains that are bookmarked.
-Future<List<Map<String, dynamic>>> getSavedBookmarkedStrains() async {
+Future<List<Strain>> getSavedBookmarkedStrains() async {
   final prefs = await SharedPreferences.getInstance();
   final bookmarkedStrainNames = prefs.getStringList('bookmarks') ?? [];
 
   final savedStrains = await getSavedStrains();
-  return savedStrains.where((strain) {
-    final strainSafe = SafeJson(strain);
-    final strainName = strainSafe.get<String>('name') ?? 'N/A';
-
-    return bookmarkedStrainNames.contains(strainName);
-  }).toList();
+  return savedStrains
+      .where((strain) => bookmarkedStrainNames.contains(strain.name ?? 'N/A'))
+      .toList();
 }

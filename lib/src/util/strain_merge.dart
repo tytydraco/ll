@@ -1,5 +1,4 @@
-import 'package:ll/src/util/safe_json.dart';
-import 'package:ll/src/util/string_ext.dart';
+import 'package:ll/src/data/strain.dart';
 
 /// Attempt to merge strain properties together.
 class StrainMerge {
@@ -9,110 +8,28 @@ class StrainMerge {
   });
 
   /// The strains to merge.
-  final Set<Map<String, dynamic>> strains;
+  final Set<Strain> strains;
 
-  double _mergeThc() {
+  double? _mergeThc() {
     var thcStrainsAccountedFor = 0;
     var mergeStrainThc = 0.0;
-    for (final strain in strains) {
-      final strainSafe = SafeJson(strain);
-      final thc = strainSafe.get<double>('thc');
 
-      if (thc == null) continue;
+    for (final strain in strains) {
+      if (strain.thc == null) continue;
 
       thcStrainsAccountedFor += 1;
-      mergeStrainThc += thc;
+      mergeStrainThc += strain.thc!;
     }
+
+    if (thcStrainsAccountedFor == 0) return null;
     return mergeStrainThc / thcStrainsAccountedFor;
   }
 
-  String _mergeMainTerp() {
-    final terpScores = {
-      'caryophyllene': _getPropAvg(
-        (s) => s.to('terps').to('caryophyllene').get<double>('score'),
-      ),
-      'humulene': _getPropAvg(
-        (s) => s.to('terps').to('humulene').get<double>('score'),
-      ),
-      'limonene': _getPropAvg(
-        (s) => s.to('terps').to('limonene').get<double>('score'),
-      ),
-      'linalool': _getPropAvg(
-        (s) => s.to('terps').to('linalool').get<double>('score'),
-      ),
-      'myrcene': _getPropAvg(
-        (s) => s.to('terps').to('myrcene').get<double>('score'),
-      ),
-      'ocimene': _getPropAvg(
-        (s) => s.to('terps').to('ocimene').get<double>('score'),
-      ),
-      'pinene': _getPropAvg(
-        (s) => s.to('terps').to('pinene').get<double>('score'),
-      ),
-      'terpinolene': _getPropAvg(
-        (s) => s.to('terps').to('terpinolene').get<double>('score'),
-      ),
-    };
-
-    final topTerps = terpScores.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    return topTerps.first.key.capitalize();
-  }
-
-  String _mergeTopEffect() {
-    final effectScores = {
-      'aroused': _getPropAvg(
-        (s) => s.to('effects').to('aroused').get<double>('score'),
-      ),
-      'creative': _getPropAvg(
-        (s) => s.to('effects').to('creative').get<double>('score'),
-      ),
-      'energetic': _getPropAvg(
-        (s) => s.to('effects').to('energetic').get<double>('score'),
-      ),
-      'euphoric': _getPropAvg(
-        (s) => s.to('effects').to('euphoric').get<double>('score'),
-      ),
-      'focused': _getPropAvg(
-        (s) => s.to('effects').to('focused').get<double>('score'),
-      ),
-      'giggly': _getPropAvg(
-        (s) => s.to('effects').to('giggly').get<double>('score'),
-      ),
-      'happy': _getPropAvg(
-        (s) => s.to('effects').to('happy').get<double>('score'),
-      ),
-      'hungry': _getPropAvg(
-        (s) => s.to('effects').to('hungry').get<double>('score'),
-      ),
-      'relaxed': _getPropAvg(
-        (s) => s.to('effects').to('relaxed').get<double>('score'),
-      ),
-      'sleepy': _getPropAvg(
-        (s) => s.to('effects').to('sleepy').get<double>('score'),
-      ),
-      'talkative': _getPropAvg(
-        (s) => s.to('effects').to('talkative').get<double>('score'),
-      ),
-      'tingly': _getPropAvg(
-        (s) => s.to('effects').to('tingly').get<double>('score'),
-      ),
-      'uplifted': _getPropAvg(
-        (s) => s.to('effects').to('uplifted').get<double>('score'),
-      ),
-    };
-
-    final topEffects = effectScores.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    return topEffects.first.key.capitalize();
-  }
-
-  double _getPropAvg(double? Function(SafeJson strainSafe) getValue) {
+  double _getPropAvg(double? Function(Strain strain) getValue) {
     var score = 0.0;
     var accountedFor = 0;
     for (final strain in strains) {
-      final strainSafe = SafeJson(strain);
-      final value = getValue(strainSafe);
+      final value = getValue(strain);
 
       if (value == null) continue;
 
@@ -124,11 +41,8 @@ class StrainMerge {
   }
 
   /// Merge the strains together and return the merged strain.
-  Map<String, dynamic> merge() {
-    final strainNames = strains.map((strain) {
-      final strainSafe = SafeJson(strain);
-      return strainSafe.get<String>('name') ?? 'N/A';
-    }).toList();
+  Strain merge() {
+    final strainNames = strains.map((e) => e.name).toSet();
 
     // New strain name will be "Merge of <strains>"
     final mergeStrainName = 'Merge of ${strainNames.join(', ')}';
@@ -136,162 +50,51 @@ class StrainMerge {
         'Merged strain created from the following strains: \n - '
         '${strainNames.join(', ')}';
 
-    final strainCategories = strains.map((strain) {
-      final strainSafe = SafeJson(strain);
-      return strainSafe.get<String>('category');
-    }).toSet();
+    final strainCategories = strains.map((e) => e.category).toSet();
 
     // If there are different strain types merged, it is a hybrid.
     final mergeStrainCategory =
         (strainCategories.length == 1) ? strainCategories.first : 'Hybrid';
 
-    final topEffect = _mergeTopEffect();
     final mergeStrainThc = _mergeThc();
-    final mainTerp = _mergeMainTerp();
 
-    return <String, dynamic>{
-      'name': mergeStrainName,
-      'category': mergeStrainCategory,
-      'shortDescriptionPlain': mergeStrainDescription,
-      'topEffect': topEffect,
-      'thc': mergeStrainThc,
-      'strainTopTerp': mainTerp,
-      'cannabinoids': {
-        'cbc': {
-          'percentile50': _getPropAvg(
-            (s) => s.to('cannabinoids').to('cbc').get<double>('percentile50'),
-          ),
-        },
-        'cbd': {
-          'percentile50': _getPropAvg(
-            (s) => s.to('cannabinoids').to('cbd').get<double>('percentile50'),
-          ),
-        },
-        'cbg': {
-          'percentile50': _getPropAvg(
-            (s) => s.to('cannabinoids').to('cbg').get<double>('percentile50'),
-          ),
-        },
-        'thc': {
-          'percentile50': _getPropAvg(
-            (s) => s.to('cannabinoids').to('thc').get<double>('percentile50'),
-          ),
-        },
-        'thcv': {
-          'percentile50': _getPropAvg(
-            (s) => s.to('cannabinoids').to('thcv').get<double>('percentile50'),
-          ),
-        },
+    return Strain(
+      name: mergeStrainName,
+      category: mergeStrainCategory,
+      description: mergeStrainDescription,
+      thc: mergeStrainThc,
+      cannabinoids: {
+        'cbc': _getPropAvg((s) => s.cannabinoids?['cbc']),
+        'cbd': _getPropAvg((s) => s.cannabinoids?['cbd']),
+        'cbg': _getPropAvg((s) => s.cannabinoids?['cbg']),
+        'thc': _getPropAvg((s) => s.cannabinoids?['thc']),
+        'thcv': _getPropAvg((s) => s.cannabinoids?['thcv']),
       },
-      'effects': {
-        'aroused': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('aroused').get<double>('score'),
-          ),
-        },
-        'creative': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('creative').get<double>('score'),
-          ),
-        },
-        'energetic': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('energetic').get<double>('score'),
-          ),
-        },
-        'euphoric': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('euphoric').get<double>('score'),
-          ),
-        },
-        'focused': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('focused').get<double>('score'),
-          ),
-        },
-        'giggly': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('giggly').get<double>('score'),
-          ),
-        },
-        'happy': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('happy').get<double>('score'),
-          ),
-        },
-        'hungry': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('hungry').get<double>('score'),
-          ),
-        },
-        'relaxed': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('relaxed').get<double>('score'),
-          ),
-        },
-        'sleepy': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('sleepy').get<double>('score'),
-          ),
-        },
-        'talkative': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('talkative').get<double>('score'),
-          ),
-        },
-        'tingly': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('tingly').get<double>('score'),
-          ),
-        },
-        'uplifted': {
-          'score': _getPropAvg(
-            (s) => s.to('effects').to('uplifted').get<double>('score'),
-          ),
-        },
+      effects: {
+        'aroused': _getPropAvg((s) => s.effects?['aroused']),
+        'creative': _getPropAvg((s) => s.effects?['creative']),
+        'energetic': _getPropAvg((s) => s.effects?['energetic']),
+        'euphoric': _getPropAvg((s) => s.effects?['euphoric']),
+        'focused': _getPropAvg((s) => s.effects?['focused']),
+        'giggly': _getPropAvg((s) => s.effects?['giggly']),
+        'happy': _getPropAvg((s) => s.effects?['happy']),
+        'hungry': _getPropAvg((s) => s.effects?['hungry']),
+        'relaxed': _getPropAvg((s) => s.effects?['relaxed']),
+        'sleepy': _getPropAvg((s) => s.effects?['sleepy']),
+        'talkative': _getPropAvg((s) => s.effects?['talkative']),
+        'tingly': _getPropAvg((s) => s.effects?['tingly']),
+        'uplifted': _getPropAvg((s) => s.effects?['uplifted']),
       },
-      'terps': {
-        'caryophyllene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('caryophyllene').get<double>('score'),
-          ),
-        },
-        'humulene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('humulene').get<double>('score'),
-          ),
-        },
-        'limonene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('limonene').get<double>('score'),
-          ),
-        },
-        'linalool': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('linalool').get<double>('score'),
-          ),
-        },
-        'myrcene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('myrcene').get<double>('score'),
-          ),
-        },
-        'ocimene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('ocimene').get<double>('score'),
-          ),
-        },
-        'pinene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('pinene').get<double>('score'),
-          ),
-        },
-        'terpinolene': {
-          'score': _getPropAvg(
-            (s) => s.to('terps').to('terpinolene').get<double>('score'),
-          ),
-        },
+      terpenes: {
+        'caryophyllene': _getPropAvg((s) => s.terpenes?['caryophyllene']),
+        'humulene': _getPropAvg((s) => s.terpenes?['humulene']),
+        'limonene': _getPropAvg((s) => s.terpenes?['limonene']),
+        'linalool': _getPropAvg((s) => s.terpenes?['linalool']),
+        'myrcene': _getPropAvg((s) => s.terpenes?['myrcene']),
+        'ocimene': _getPropAvg((s) => s.terpenes?['ocimene']),
+        'pinene': _getPropAvg((s) => s.terpenes?['pinene']),
+        'terpinolene': _getPropAvg((s) => s.terpenes?['terpinolene']),
       },
-    };
+    );
   }
 }

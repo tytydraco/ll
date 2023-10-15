@@ -6,12 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ll/src/api/leafly_api.dart';
+import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/bookmarks/bookmarks_screen.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/merge/merge_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
-import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_set.dart';
 
 /// The strains screen.
@@ -24,7 +24,7 @@ class StrainsScreen extends StatefulWidget {
   });
 
   /// Triggered when user selects a strain.
-  final void Function(Map<String, dynamic> strain)? onSelect;
+  final void Function(Strain strain)? onSelect;
 
   /// Whether or not the user is trying to select a single strain. This will
   /// hide the unnecessary buttons.
@@ -45,9 +45,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
     final savedStrains = await getSavedStrains();
     if (savedStrains.isNotEmpty) {
       setState(() {
-        _strains
-          ..clear()
-          ..addAll(savedStrains);
+        _strains.addAll(savedStrains);
       });
     }
   }
@@ -56,46 +54,32 @@ class _StrainsScreenState extends State<StrainsScreen> {
     // Fetch from the web.
     await for (final strain in fetchStrains()) {
       setState(() {
-        _strains.add(strain);
+        _strains
+          ..removeWhere((e) => e.name == strain.name)
+          ..add(strain);
       });
 
-      if (kDebugMode) print('Strains: ${_strains.length}');
+      if (kDebugMode) print('(Total: ${_strains.length})\t${strain.name}');
     }
 
     // Update the save file.
     await setSavedStrains(_strains.toList());
   }
 
-  List<Map<String, dynamic>> _filterStrains(String searchTerm) {
+  List<Strain> _filterStrains(String searchTerm) {
     if (searchTerm == '') return [];
-
-    // Account for other names.
-    List<String> getOtherNames(Map<String, dynamic> strain) {
-      final strainSafe = SafeJson(strain);
-      final otherNamesRaw = strainSafe.get<String>('subtitle');
-
-      // No other names...
-      if (otherNamesRaw == null) return [];
-
-      // Remove "Aka strain A, strain B, ..." fluff => 'strain A,strainB,...'
-      final otherNames = otherNamesRaw.replaceAll('aka', '').split(',');
-
-      return otherNames;
-    }
 
     // Ignore case.
     final reducedTerm = searchTerm.toLowerCase();
 
     // Filter for strains that contain the strain name or other names.
     final filteredStrains = _strains.where((strain) {
-      final strainSafe = SafeJson(strain);
-
       // Search by name...
-      final name = strainSafe.get<String>('name') ?? 'N/A';
+      final name = strain.name ?? 'N/A';
       if (name.toLowerCase().contains(reducedTerm)) return true;
 
       // Search by other names...
-      final otherNames = getOtherNames(strain);
+      final otherNames = strain.otherNames ?? [];
       for (final otherName in otherNames) {
         if (otherName.toLowerCase().contains(reducedTerm)) return true;
       }
@@ -140,7 +124,8 @@ class _StrainsScreenState extends State<StrainsScreen> {
 
     try {
       // Try to show detail screen for clipboard strain.
-      final strain = jsonDecode(content!) as Map<String, dynamic>;
+      final strainRaw = jsonDecode(content!) as Map<String, dynamic>;
+      final strain = Strain.fromJson(strainRaw);
       widget.onSelect?.call(strain);
     } catch (_) {
       if (!context.mounted) return;
@@ -159,10 +144,8 @@ class _StrainsScreenState extends State<StrainsScreen> {
 
     try {
       // Try to show detail screen for clipboard strain.
-      final strain = jsonDecode(content!) as Map<String, dynamic>;
-
-      final strainSafe = SafeJson(strain);
-      final strainName = strainSafe.get<String>('name') ?? 'N/A';
+      final strainRaw = jsonDecode(content!) as Map<String, dynamic>;
+      final strain = Strain.fromJson(strainRaw);
 
       setState(() {
         _strains.add(strain);
@@ -173,7 +156,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Imported "$strainName".'),
+            content: Text('Imported "${strain.name ?? 'N/A'}".'),
           ),
         );
       }

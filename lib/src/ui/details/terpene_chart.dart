@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:ll/src/util/safe_json.dart';
+import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// Show the terpene content.
@@ -12,17 +12,15 @@ class TerpeneChart extends StatefulWidget {
   });
 
   /// The strain.
-  final Map<String, dynamic> strain;
+  final Strain strain;
 
   @override
   State<TerpeneChart> createState() => _TerpeneChartState();
 }
 
 class _TerpeneChartState extends State<TerpeneChart> {
-  late final _strainSafe = SafeJson(widget.strain);
-
   PieChartSectionData _buildSection(String terpene, Color color) {
-    final score = _strainSafe.to('terps').to(terpene).get<double>('score') ?? 0;
+    final score = widget.strain.terpenes?[terpene] ?? 0;
 
     return PieChartSectionData(
       showTitle: false,

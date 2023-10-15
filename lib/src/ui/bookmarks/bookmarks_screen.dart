@@ -3,7 +3,6 @@ import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/ui/strains/strains_screen.dart';
-import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_set.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,10 +42,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
 
   Future<void> _saveBookmarks() async {
     final prefs = await SharedPreferences.getInstance();
-    final strainNames = _strains.map((strain) {
-      final strainSafe = SafeJson(strain);
-      return strainSafe.get<String>('name') ?? 'N/A';
-    }).toSet();
+    final strainNames = _strains.map((e) => e.name ?? 'N/A').toSet();
     await prefs.setStringList('bookmarks', strainNames.toList());
   }
 

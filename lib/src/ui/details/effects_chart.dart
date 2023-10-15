@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:ll/src/util/safe_json.dart';
+import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// Show the effects.
@@ -14,15 +14,13 @@ class EffectsChart extends StatefulWidget {
   });
 
   /// The strain.
-  final Map<String, dynamic> strain;
+  final Strain strain;
 
   @override
   State<EffectsChart> createState() => _EffectsChartState();
 }
 
 class _EffectsChartState extends State<EffectsChart> {
-  late final _strainSafe = SafeJson(widget.strain);
-
   final _effectIndicies = <int, String>{
     -6: 'aroused',
     -5: 'creative',
@@ -44,8 +42,7 @@ class _EffectsChartState extends State<EffectsChart> {
     int x,
     Color color,
   ) {
-    final score =
-        _strainSafe.to('effects').to(effect).get<double>('score') ?? 0;
+    final score = widget.strain.effects?[effect] ?? 0;
 
     final roundedValue = double.parse(score.toStringAsFixed(2));
 
@@ -62,10 +59,7 @@ class _EffectsChartState extends State<EffectsChart> {
 
   double _getChartMaxMagnitude() {
     return _effectIndicies.values
-        .map(
-          (e) =>
-              _strainSafe.to('effects').to(e).get<double>('score')?.abs() ?? 0,
-        )
+        .map((e) => widget.strain.effects?[e]?.abs() ?? 0)
         .reduce(max);
   }
 

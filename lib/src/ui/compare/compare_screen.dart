@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
@@ -16,7 +17,7 @@ class CompareScreen extends StatefulWidget {
 }
 
 class _CompareScreenState extends State<CompareScreen> {
-  final _strains = <Map<String, dynamic>>[];
+  final _strains = <Strain>[];
 
   Future<void> _addBookmarkedStrains() async {
     final bookmarkedStrains = await getSavedBookmarkedStrains();

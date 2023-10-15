@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/notes_area.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
 import 'package:ll/src/util/colors.dart';
-import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// The details about the strain.
@@ -20,7 +20,7 @@ class DetailsScreen extends StatefulWidget {
   });
 
   /// The strain JSON.
-  final Map<String, dynamic> strain;
+  final Strain strain;
 
   /// Show the back button.
   final bool showBack;
@@ -30,8 +30,6 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
-  late final _strainSafe = SafeJson(widget.strain);
-
   Widget _paramTile(String title, dynamic content) {
     final formattedContent = content.toString().capitalize();
 
@@ -41,53 +39,53 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  String _getStrainCategory(String? category, String? phenotype) {
-    if (category == null && phenotype != null) return phenotype;
-    if (category != null && phenotype == null) return category;
-    if (category == null && phenotype == null) return 'N/A';
-    if (category == phenotype) return category!;
-
-    return 'Category: $category\nPhenotype: $phenotype';
-  }
-
   Future<void> _copyStrainData() async {
     await Clipboard.setData(
       ClipboardData(text: jsonEncode(widget.strain)),
     );
   }
 
-  bool _hasCannabinoids() {
-    return _strainSafe
-                .to('cannabinoids')
-                .to('thcv')
-                .get<double>('percentile50') !=
-            null ||
-        _strainSafe.to('cannabinoids').to('cbg').get<double>('percentile50') !=
-            null ||
-        _strainSafe.to('cannabinoids').to('cbc').get<double>('percentile50') !=
-            null ||
-        _strainSafe.to('cannabinoids').to('thc').get<double>('percentile50') !=
-            null ||
-        _strainSafe.to('cannabinoids').to('cbd').get<double>('percentile50') !=
-            null;
+  bool _hasNestedProperties(
+    Map<String, dynamic>? Function(Strain strain) getValue,
+  ) {
+    final nest = getValue(widget.strain);
+
+    if (nest == null || nest.isEmpty) return false;
+
+    for (final value in nest.values) {
+      if (value != null) return true;
+    }
+
+    return false;
+  }
+
+  String? _getTopTerp() {
+    final topTerps = widget.strain.terpenes?.entries.toList()
+      ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
+    return topTerps?.first.key;
+  }
+
+  String? _getTopEffect() {
+    final topTerps = widget.strain.effects?.entries.toList()
+      ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
+    return topTerps?.first.key;
   }
 
   @override
   Widget build(BuildContext context) {
-    final name = _strainSafe.get<String>('name');
-    final description = _strainSafe.get<String>('shortDescriptionPlain');
-    final otherNames = _strainSafe.get<String>('subtitle');
-    final averageRating = _strainSafe.get<double>('averageRating');
-    final reviewCount = _strainSafe.get<int>('reviewCount');
-    final category = _strainSafe.get<String>('category');
-    final phenotype = _strainSafe.get<String>('phenotype');
-    final topTerp = _strainSafe.get<String>('strainTopTerp');
-    final topEffect = _strainSafe.get<String>('topEffect');
-    final thc = _strainSafe.get<double>('thc');
+    final name = widget.strain.name;
+    final description = widget.strain.description;
+    final otherNames = widget.strain.otherNames?.join(', ');
+    final averageRating = widget.strain.averageRating;
+    final reviewCount = widget.strain.numberOfRatings;
+    final category = widget.strain.category;
+    final topTerp = _getTopTerp();
+    final topEffect = _getTopEffect();
+    final thc = widget.strain.thc;
 
-    final hasTerps = _strainSafe.to('terps').json?.isNotEmpty ?? false;
-    final hasEffects = _strainSafe.to('effects').json?.isNotEmpty ?? false;
-    final hasCannabinoids = _hasCannabinoids();
+    final hasTerps = _hasNestedProperties((s) => s.terpenes);
+    final hasEffects = _hasNestedProperties((s) => s.effects);
+    final hasCannabinoids = _hasNestedProperties((s) => s.cannabinoids);
 
     return Scaffold(
       appBar: AppBar(
@@ -128,8 +126,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
             _paramTile('Ratings', reviewCount),
             const Divider(),
           ],
-          if (category != null || phenotype != null) ...[
-            _paramTile('Category', _getStrainCategory(category, phenotype)),
+          if (category != null) ...[
+            _paramTile('Category', category),
             const Divider(),
           ],
 
