@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -183,6 +184,12 @@ class _StrainsScreenState extends State<StrainsScreen> {
     }
   }
 
+  Future<void> _selectRandom() async {
+    final randomIndex = Random().nextInt(_strains.length);
+    final randomStrain = _strains.toList()[randomIndex];
+    widget.onSelect?.call(randomStrain);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -229,21 +236,20 @@ class _StrainsScreenState extends State<StrainsScreen> {
           PopupMenuButton(
             onSelected: (value) {},
             itemBuilder: (context) => [
-              if (!widget.selectMode)
+              if (!widget.selectMode) ...[
                 PopupMenuItem<void>(
                   onTap: _showBookmarks,
                   child: const Text('Bookmarks'),
                 ),
-              if (!widget.selectMode)
                 PopupMenuItem<void>(
                   onTap: _mergeStrains,
                   child: const Text('Merge'),
                 ),
-              if (!widget.selectMode)
                 PopupMenuItem<void>(
                   onTap: _compareStrains,
                   child: const Text('Compare'),
                 ),
+              ],
               PopupMenuItem<void>(
                 onTap: _importClipboardStrain,
                 child: const Text('Import from clipboard'),
@@ -251,6 +257,10 @@ class _StrainsScreenState extends State<StrainsScreen> {
               PopupMenuItem<void>(
                 onTap: _selectClipboardStrain,
                 child: const Text('Select from clipboard'),
+              ),
+              PopupMenuItem<void>(
+                onTap: _selectRandom,
+                child: const Text('Random'),
               ),
             ],
           ),
