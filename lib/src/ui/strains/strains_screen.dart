@@ -11,6 +11,7 @@ import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/bookmarks/bookmarks_screen.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/merge/merge_screen.dart';
+import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/strain_set.dart';
 
@@ -176,24 +177,35 @@ class _StrainsScreenState extends State<StrainsScreen> {
     widget.onSelect?.call(randomStrain);
   }
 
+  Future<void> _filterFromSearch() async {
+    final strains = await Navigator.push(
+      context,
+      MaterialPageRoute<List<Strain>>(
+        builder: (_) => const SearchScreen(),
+      ),
+    );
+
+    // Ignore if user did not search.
+    if (strains == null) return;
+
+    setState(() {
+      _filteredStrains.clear();
+      if (strains.isNotEmpty) _filteredStrains.addAll(strains);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _loadSavedStrains();
+
+    _filteredStrains
+      ..clear()
+      ..addAll(_strains);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_searchController.text.isEmpty) {
-      _filteredStrains
-        ..clear()
-        ..addAll(_strains);
-    } else {
-      _filteredStrains
-        ..clear()
-        ..addAll(_filterStrains(_searchController.text));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -205,8 +217,14 @@ class _StrainsScreenState extends State<StrainsScreen> {
             hintStyle: TextStyle(color: Colors.white54),
             border: InputBorder.none,
           ),
-          onChanged: (value) {
-            setState(() {});
+          onChanged: (searchTerm) {
+            final newStrains =
+                searchTerm.isNotEmpty ? _filterStrains(searchTerm) : _strains;
+            setState(() {
+              _filteredStrains
+                ..clear()
+                ..addAll(newStrains);
+            });
           },
         ),
         flexibleSpace: Container(
@@ -247,6 +265,10 @@ class _StrainsScreenState extends State<StrainsScreen> {
               PopupMenuItem<void>(
                 onTap: _selectRandom,
                 child: const Text('Random'),
+              ),
+              PopupMenuItem<void>(
+                onTap: _filterFromSearch,
+                child: const Text('Advanced search'),
               ),
             ],
           ),
