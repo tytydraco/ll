@@ -18,10 +18,15 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({
     super.key,
     this.onSelect,
+    this.selectMode = false,
   });
 
   /// Triggered when user selects a strain.
   final void Function(Map<String, dynamic> strain)? onSelect;
+
+  /// Whether or not the user is trying to select a single strain. This will
+  /// hide the bookmarks button and compare button.
+  final bool selectMode;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -162,14 +167,16 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: _showBookmarks,
-            icon: const Icon(Icons.bookmark),
-          ),
-          IconButton(
-            onPressed: _compareStrains,
-            icon: const Icon(Icons.compare),
-          ),
+          if (!widget.selectMode)
+            IconButton(
+              onPressed: _showBookmarks,
+              icon: const Icon(Icons.bookmark),
+            ),
+          if (!widget.selectMode)
+            IconButton(
+              onPressed: _compareStrains,
+              icon: const Icon(Icons.compare),
+            ),
           IconButton(
             onPressed: () async {
               // Read clipboard data.

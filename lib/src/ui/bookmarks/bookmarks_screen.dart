@@ -25,6 +25,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       context,
       MaterialPageRoute<void>(
         builder: (context) => SearchScreen(
+          selectMode: true,
           onSelect: (strain) async {
             Navigator.pop(context);
 

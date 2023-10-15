@@ -22,6 +22,7 @@ class _CompareScreenState extends State<CompareScreen> {
       context,
       MaterialPageRoute<void>(
         builder: (context) => SearchScreen(
+          selectMode: true,
           onSelect: (strain) {
             Navigator.pop(context);
             setState(() {
