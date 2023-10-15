@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ll/src/util/safe_json.dart';
@@ -17,25 +19,31 @@ class CannabinoidsChart extends StatefulWidget {
   State<CannabinoidsChart> createState() => _CannabinoidsChartState();
 }
 
+class _Cannabinoid {
+  _Cannabinoid({
+    required this.id,
+    required this.color,
+  });
+
+  final String id;
+  final Color color;
+}
+
 class _CannabinoidsChartState extends State<CannabinoidsChart> {
   late final _strainSafe = SafeJson(widget.strain);
 
-  final _cannabinoidsIndicies = <int, String>{
-    -2: 'thcv',
-    -1: 'cbg',
-    0: 'cbc',
-    1: 'thc',
-    2: 'cbd',
+  final _cannabinoidsIndicies = {
+    -2: _Cannabinoid(id: 'thcv', color: Colors.red),
+    -1: _Cannabinoid(id: 'cbg', color: Colors.orange),
+    0: _Cannabinoid(id: 'cbc', color: Colors.yellow),
+    1: _Cannabinoid(id: 'thc', color: Colors.green),
+    2: _Cannabinoid(id: 'cbd', color: Colors.blue),
   };
 
-  BarChartGroupData _buildGroup(
-    String cannabinoid,
-    int x,
-    Color color,
-  ) {
+  BarChartGroupData _buildGroup(int x, _Cannabinoid cannabinoid) {
     final score = _strainSafe
             .to('cannabinoids')
-            .to(cannabinoid)
+            .to(cannabinoid.id)
             .get<double>('percentile50') ??
         0;
 
@@ -44,10 +52,27 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
       barRods: [
         BarChartRodData(
           toY: score,
-          color: color,
+          color: cannabinoid.color,
         ),
       ],
     );
+  }
+
+  double _getChartMaxY() {
+    final maxMagnitude = _cannabinoidsIndicies.values
+        .map(
+          (e) =>
+              _strainSafe
+                  .to('cannabinoids')
+                  .to(e.id)
+                  .get<double>('percentile50')
+                  ?.abs() ??
+              0,
+        )
+        .reduce(max);
+
+    // Users need a visual comparison, so adapt to higher values but lock here.
+    return max(maxMagnitude, 22);
   }
 
   @override
@@ -61,7 +86,7 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
           child: BarChart(
             BarChartData(
               minY: 0,
-              maxY: 30,
+              maxY: _getChartMaxY(),
               titlesData: FlTitlesData(
                 leftTitles: const AxisTitles(),
                 rightTitles: const AxisTitles(),
@@ -74,7 +99,7 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
                       return Align(
                         alignment: Alignment.bottomCenter,
                         child: Text(
-                          _cannabinoidsIndicies[value]!.toUpperCase(),
+                          _cannabinoidsIndicies[value]!.id.toUpperCase(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 12,
@@ -85,13 +110,9 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
                   ),
                 ),
               ),
-              barGroups: [
-                _buildGroup('thcv', -2, Colors.red),
-                _buildGroup('cbg', -1, Colors.orange),
-                _buildGroup('cbc', 0, Colors.yellow),
-                _buildGroup('thc', 1, Colors.green),
-                _buildGroup('cbd', 2, Colors.blue),
-              ],
+              barGroups: _cannabinoidsIndicies.entries
+                  .map((e) => _buildGroup(e.key, e.value))
+                  .toList(),
               gridData: const FlGridData(
                 show: false,
               ),
