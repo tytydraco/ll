@@ -1,4 +1,5 @@
 import 'package:ll/src/util/safe_json.dart';
+import 'package:ll/src/util/string_ext.dart';
 
 /// Attempt to merge strain properties together.
 class StrainMerge {
@@ -9,24 +10,6 @@ class StrainMerge {
 
   /// The strains to merge.
   final Set<Map<String, dynamic>> strains;
-
-  String _mergeTopEffect() {
-    final strainTopEffects = <String, int>{};
-    for (final strain in strains) {
-      final strainSafe = SafeJson(strain);
-      final topEffect = strainSafe.get<String>('topEffect');
-      if (topEffect == null) continue;
-
-      if (strainTopEffects.containsKey(topEffect)) {
-        strainTopEffects[topEffect] = strainTopEffects[topEffect]! + 1;
-      } else {
-        strainTopEffects[topEffect] = 1;
-      }
-    }
-    final topEffects = strainTopEffects.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    return topEffects.first.key;
-  }
 
   double _mergeThc() {
     var thcStrainsAccountedFor = 0;
@@ -75,6 +58,54 @@ class StrainMerge {
     }
 
     return score / accountedFor;
+  }
+
+  String _mergeTopEffect() {
+    final topEffectScores = {
+      'aroused': _getPropAvg(
+        (s) => s.to('effects').to('aroused').get<double>('score'),
+      ),
+      'creative': _getPropAvg(
+        (s) => s.to('effects').to('creative').get<double>('score'),
+      ),
+      'energetic': _getPropAvg(
+        (s) => s.to('effects').to('energetic').get<double>('score'),
+      ),
+      'euphoric': _getPropAvg(
+        (s) => s.to('effects').to('euphoric').get<double>('score'),
+      ),
+      'focused': _getPropAvg(
+        (s) => s.to('effects').to('focused').get<double>('score'),
+      ),
+      'score': _getPropAvg(
+        (s) => s.to('effects').to('giggly').get<double>('score'),
+      ),
+      'happy': _getPropAvg(
+        (s) => s.to('effects').to('happy').get<double>('score'),
+      ),
+      'hungry': _getPropAvg(
+        (s) => s.to('effects').to('hungry').get<double>('score'),
+      ),
+      'relaxed': _getPropAvg(
+        (s) => s.to('effects').to('relaxed').get<double>('score'),
+      ),
+      'sleepy': _getPropAvg(
+        (s) => s.to('effects').to('sleepy').get<double>('score'),
+      ),
+      'talkative': _getPropAvg(
+        (s) => s.to('effects').to('talkative').get<double>('score'),
+      ),
+      'tingly': _getPropAvg(
+        (s) => s.to('effects').to('tingly').get<double>('score'),
+      ),
+      'uplifted': _getPropAvg(
+        (s) => s.to('effects').to('uplifted').get<double>('score'),
+      ),
+    };
+
+    final topEffects = topEffectScores.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return topEffects.first.key.capitalize();
   }
 
   /// Merge the strains together and return the merged strain.
