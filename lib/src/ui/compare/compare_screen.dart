@@ -115,11 +115,11 @@ class _CompareScreenState extends State<CompareScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('Compare'),
         onPressed: _compare,
-        child: const Icon(Icons.compare),
+        icon: const Icon(Icons.compare),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: _strains.isNotEmpty
           ? ListView.separated(
               itemBuilder: (context, index) {
