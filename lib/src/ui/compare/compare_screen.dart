@@ -3,7 +3,6 @@ import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
-import 'package:ll/src/util/strain_set.dart';
 
 /// Compare multiple strains against each other.
 class CompareScreen extends StatefulWidget {
@@ -17,7 +16,7 @@ class CompareScreen extends StatefulWidget {
 }
 
 class _CompareScreenState extends State<CompareScreen> {
-  final _strains = createStrainsSet();
+  final _strains = <Map<String, dynamic>>[];
 
   Future<void> _addBookmarkedStrains() async {
     final bookmarkedStrains = await getSavedBookmarkedStrains();
@@ -67,7 +66,7 @@ class _CompareScreenState extends State<CompareScreen> {
       context,
       MaterialPageRoute<void>(
         builder: (context) {
-          final pages = _strains.toList().asMap().entries.map((e) {
+          final pages = _strains.asMap().entries.map((e) {
             final index = e.key;
             final strain = e.value;
 
@@ -135,14 +134,14 @@ class _CompareScreenState extends State<CompareScreen> {
       body: _strains.isNotEmpty
           ? ListView.separated(
               itemBuilder: (context, index) {
-                final strain = _strains.toList()[index];
+                final strain = _strains[index];
 
                 return StrainListTile(
                   strain: strain,
                   leading: IconButton(
                     onPressed: () {
                       setState(() {
-                        _strains.remove(strain);
+                        _strains.removeAt(index);
                       });
                     },
                     icon: const Icon(Icons.delete),
