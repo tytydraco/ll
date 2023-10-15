@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
+import 'package:ll/src/util/safe_json.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Compare multiple strains against each other.
 class CompareScreen extends StatefulWidget {
@@ -16,6 +19,23 @@ class CompareScreen extends StatefulWidget {
 
 class _CompareScreenState extends State<CompareScreen> {
   final _strains = <Map<String, dynamic>>[];
+
+  Future<void> _addBookmarkedStrains() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bookmarkedStrainNames = prefs.getStringList('bookmarks') ?? [];
+
+    final savedStrains = await getSavedStrains();
+    final bookmarkedStrains = savedStrains.where((strain) {
+      final strainSafe = SafeJson(strain);
+      final strainName = strainSafe.get<String>('name') ?? 'N/A';
+
+      return bookmarkedStrainNames.contains(strainName);
+    }).toList();
+
+    setState(() {
+      _strains.addAll(bookmarkedStrains);
+    });
+  }
 
   Future<void> _addStrain() async {
     await Navigator.push(
@@ -91,6 +111,10 @@ class _CompareScreenState extends State<CompareScreen> {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: _addBookmarkedStrains,
+            icon: const Icon(Icons.bookmark_add),
+          ),
           IconButton(
             onPressed: _addStrain,
             icon: const Icon(Icons.add),

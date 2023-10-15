@@ -46,12 +46,12 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       final strainSafe = SafeJson(strain);
       return strainSafe.get<String>('name') ?? 'N/A';
     }).toSet();
-    await prefs.setStringList('favorites', strainNames.toList());
+    await prefs.setStringList('bookmarks', strainNames.toList());
   }
 
   Future<void> _getBookmarks() async {
     final prefs = await SharedPreferences.getInstance();
-    final strainNames = prefs.getStringList('favorites') ?? [];
+    final strainNames = prefs.getStringList('bookmarks') ?? [];
 
     final savedStrains = await getSavedStrains();
     final bookmarkedStrains = savedStrains.where((strain) {
