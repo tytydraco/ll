@@ -21,11 +21,11 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
   late final _strainSafe = SafeJson(widget.strain);
 
   final _cannabinoidsIndicies = <int, String>{
-    -2: 'cbc',
-    -1: 'cbd',
-    0: 'cbg',
+    -2: 'thcv',
+    -1: 'cbg',
+    0: 'cbc',
     1: 'thc',
-    2: 'thcv',
+    2: 'cbd',
   };
 
   BarChartGroupData _buildGroup(
@@ -86,11 +86,11 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
                 ),
               ),
               barGroups: [
-                _buildGroup('thcv', 2, Colors.red),
-                _buildGroup('cbg', 0, Colors.orange),
-                _buildGroup('cbc', -2, Colors.yellow),
+                _buildGroup('thcv', -2, Colors.red),
+                _buildGroup('cbg', -1, Colors.orange),
+                _buildGroup('cbc', 0, Colors.yellow),
                 _buildGroup('thc', 1, Colors.green),
-                _buildGroup('cbd', -1, Colors.blue),
+                _buildGroup('cbd', 2, Colors.blue),
               ],
               gridData: const FlGridData(
                 show: false,

@@ -56,6 +56,22 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
+  bool _hasCannabinoids() {
+    return _strainSafe
+                .to('cannabinoids')
+                .to('thcv')
+                .get<double>('percentile50') !=
+            null ||
+        _strainSafe.to('cannabinoids').to('cbg').get<double>('percentile50') !=
+            null ||
+        _strainSafe.to('cannabinoids').to('cbc').get<double>('percentile50') !=
+            null ||
+        _strainSafe.to('cannabinoids').to('thc').get<double>('percentile50') !=
+            null ||
+        _strainSafe.to('cannabinoids').to('cbd').get<double>('percentile50') !=
+            null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final name = _strainSafe.get<String>('name');
@@ -71,8 +87,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     final hasTerps = _strainSafe.to('terps').json?.isNotEmpty ?? false;
     final hasEffects = _strainSafe.to('effects').json?.isNotEmpty ?? false;
-    final hasCannabinoids =
-        _strainSafe.to('cannabinoids').json?.isNotEmpty ?? false;
+    final hasCannabinoids = _hasCannabinoids();
 
     return Scaffold(
       appBar: AppBar(
