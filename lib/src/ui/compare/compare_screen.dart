@@ -105,12 +105,16 @@ class _CompareScreenState extends State<CompareScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _addBookmarkedStrains,
-            icon: const Icon(Icons.bookmark_add),
-          ),
-          IconButton(
             onPressed: _addStrain,
             icon: const Icon(Icons.add),
+          ),
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem<void>(
+                onTap: _addBookmarkedStrains,
+                child: const Text('Import bookmarks'),
+              ),
+            ],
           ),
         ],
       ),

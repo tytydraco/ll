@@ -173,41 +173,84 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         actions: [
-          if (!widget.selectMode)
-            IconButton(
-              onPressed: _showBookmarks,
-              icon: const Icon(Icons.bookmark),
-            ),
-          if (!widget.selectMode)
-            IconButton(
-              onPressed: _mergeStrains,
-              icon: const Icon(Icons.merge),
-            ),
-          if (!widget.selectMode)
-            IconButton(
-              onPressed: _compareStrains,
-              icon: const Icon(Icons.compare),
-            ),
-          IconButton(
-            onPressed: () async {
-              // Read clipboard data.
-              final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
-              final content = clipboard?.text;
+          PopupMenuButton(
+            onSelected: (value) {},
+            itemBuilder: (context) => [
+              if (!widget.selectMode)
+                PopupMenuItem<void>(
+                  onTap: _showBookmarks,
+                  child: const Text('Bookmarks'),
+                ),
+              if (!widget.selectMode)
+                PopupMenuItem<void>(
+                  onTap: _mergeStrains,
+                  child: const Text('Merge'),
+                ),
+              if (!widget.selectMode)
+                PopupMenuItem<void>(
+                  onTap: _compareStrains,
+                  child: const Text('Compare'),
+                ),
+              PopupMenuItem<void>(
+                onTap: () async {
+                  // Read clipboard data.
+                  final clipboard =
+                      await Clipboard.getData(Clipboard.kTextPlain);
+                  final content = clipboard?.text;
 
-              try {
-                // Try to show detail screen for clipboard strain.
-                final strain = jsonDecode(content!) as Map<String, dynamic>;
-                widget.onSelect?.call(strain);
-              } catch (_) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Failed to parse clipboard strain.'),
-                  ),
-                );
-              }
-            },
-            icon: const Icon(Icons.content_paste_go),
+                  try {
+                    // Try to show detail screen for clipboard strain.
+                    final strain = jsonDecode(content!) as Map<String, dynamic>;
+                    widget.onSelect?.call(strain);
+                  } catch (_) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to parse clipboard strain.'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Import clipboard'),
+              ),
+
+              // if (!widget.selectMode)
+              //   IconButton(
+              //     onPressed: _showBookmarks,
+              //     icon: const Icon(Icons.bookmark),
+              //   ),
+              // if (!widget.selectMode)
+              //   IconButton(
+              //     onPressed: _mergeStrains,
+              //     icon: const Icon(Icons.merge),
+              //   ),
+              // if (!widget.selectMode)
+              //   IconButton(
+              //     onPressed: _compareStrains,
+              //     icon: const Icon(Icons.compare),
+              //   ),
+              // IconButton(
+              //   onPressed: () async {
+              //     // Read clipboard data.
+              //     final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
+              //     final content = clipboard?.text;
+              //
+              //     try {
+              //       // Try to show detail screen for clipboard strain.
+              //       final strain = jsonDecode(content!) as Map<String, dynamic>;
+              //       widget.onSelect?.call(strain);
+              //     } catch (_) {
+              //       if (!context.mounted) return;
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         const SnackBar(
+              //           content: Text('Failed to parse clipboard strain.'),
+              //         ),
+              //       );
+              //     }
+              //   },
+              //   icon: const Icon(Icons.content_paste_go),
+              // ),
+            ],
           ),
         ],
       ),
