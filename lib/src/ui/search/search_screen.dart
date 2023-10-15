@@ -34,8 +34,8 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final _strains = createStrainsSet();
+  var _filteredStrains = createStrainsSet();
 
-  var _filteredStrains = <Map<String, dynamic>>[];
   final _searchController = TextEditingController();
 
   Future<void> _loadSavedStrains() async {
@@ -129,9 +129,13 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     if (_searchController.text.isEmpty) {
-      _filteredStrains = _strains.toList();
+      _filteredStrains
+        ..clear()
+        ..addAll(_strains);
     } else {
-      _filteredStrains = _filterStrains(_searchController.text);
+      _filteredStrains
+        ..clear()
+        ..addAll(_filterStrains(_searchController.text));
     }
 
     return Scaffold(
@@ -204,7 +208,7 @@ class _SearchScreenState extends State<SearchScreen> {
           child: _filteredStrains.isNotEmpty
               ? ListView.separated(
                   itemBuilder: (context, index) {
-                    final strain = _filteredStrains[index];
+                    final strain = _filteredStrains.toList()[index];
                     return StrainListTile(
                       strain: strain,
                       onSelect: widget.onSelect,
