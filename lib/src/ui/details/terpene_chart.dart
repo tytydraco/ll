@@ -27,7 +27,7 @@ class _TerpeneChartState extends State<TerpeneChart> {
     return PieChartSectionData(
       showTitle: false,
       color: color,
-      badgePositionPercentageOffset: -1,
+      badgePositionPercentageOffset: 2,
       badgeWidget: Text(
         terpene.capitalize(),
         textAlign: TextAlign.center,
@@ -49,6 +49,7 @@ class _TerpeneChartState extends State<TerpeneChart> {
           aspectRatio: 1,
           child: PieChart(
             PieChartData(
+              centerSpaceRadius: 40,
               borderData: FlBorderData(
                 show: false,
               ),
