@@ -4,6 +4,7 @@ import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/safe_json.dart';
+import 'package:ll/src/util/strain_set.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bookmark strains for later..
@@ -18,7 +19,7 @@ class BookmarksScreen extends StatefulWidget {
 }
 
 class _BookmarksScreenState extends State<BookmarksScreen> {
-  final _strains = <Map<String, dynamic>>[];
+  final _strains = createStrainsSet();
 
   Future<void> _addStrain() async {
     await Navigator.push(
@@ -89,13 +90,13 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       body: _strains.isNotEmpty
           ? ListView.separated(
               itemBuilder: (context, index) {
-                final strain = _strains[index];
+                final strain = _strains.toList()[index];
                 return StrainListTile(
                   strain: strain,
                   leading: IconButton(
                     onPressed: () async {
                       setState(() {
-                        _strains.removeAt(index);
+                        _strains.remove(strain);
                       });
 
                       await _saveBookmarks();

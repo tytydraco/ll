@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -11,6 +10,7 @@ import 'package:ll/src/ui/bookmarks/bookmarks_screen.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/safe_json.dart';
+import 'package:ll/src/util/strain_set.dart';
 
 /// The search screen.
 class SearchScreen extends StatefulWidget {
@@ -33,15 +33,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  /// Strain objects sorted by name number in ascending order.
-  final _strains = SplayTreeSet<Map<String, dynamic>>((key1, key2) {
-    final strainSafe1 = SafeJson(key1);
-    final strainSafe2 = SafeJson(key2);
-
-    return (strainSafe1.get<String>('name') ?? 'N/A')
-        .toLowerCase()
-        .compareTo((strainSafe2.get<String>('name') ?? 'N/A').toLowerCase());
-  });
+  final _strains = createStrainsSet();
 
   var _filteredStrains = <Map<String, dynamic>>[];
   final _searchController = TextEditingController();
