@@ -91,11 +91,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
           ),
           const Divider(),
           _paramTile(
-            'Main effect',
-            (_strainSafe.get<String>('topEffect')) ?? 'N/A',
-          ),
-          const Divider(),
-          _paramTile(
             'Other names',
             (_strainSafe.get<String>('subtitle')) ?? 'N/A',
           ),
@@ -114,21 +109,23 @@ class _DetailsScreenState extends State<DetailsScreen> {
           ),
           const Divider(),
           _paramTile(
+            'Main terpene',
+            _strainSafe.get<String>('strainTopTerp') ?? 'N/A',
+          ),
+          TerpeneChart(strain: widget.strain),
+          const Divider(),
+          _paramTile(
+            'Main effect',
+            (_strainSafe.get<String>('topEffect')) ?? 'N/A',
+          ),
+          EffectsChart(strain: widget.strain),
+          const Divider(),
+          _paramTile(
             'Average THC content',
             (_strainSafe.get<double>('thc') != null)
                 ? '${_strainSafe.get<double>('thc')?.round()}%'
                 : 'N/A',
           ),
-          const Divider(),
-          _paramTile(
-            'Main terpene',
-            _strainSafe.get<String>('strainTopTerp') ?? 'N/A',
-          ),
-          const Divider(),
-          TerpeneChart(strain: widget.strain),
-          const Divider(),
-          EffectsChart(strain: widget.strain),
-          const Divider(),
           CannabinoidsChart(strain: widget.strain),
           const Divider(),
           if (_strainSafe.get<String>('name') != null)
