@@ -131,7 +131,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           CannabinoidsChart(strain: widget.strain),
           const Divider(),
           if (_strainSafe.get<String>('name') != null)
-            NotesArea(strainName: _strainSafe.get<String>('name')!)
+            NotesArea(strainName: _strainSafe.get<String>('name')!),
         ],
       ),
     );

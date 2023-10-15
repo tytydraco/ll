@@ -53,36 +53,39 @@ class _CompareScreenState extends State<CompareScreen> {
       return;
     }
 
-    await Navigator.push(context, MaterialPageRoute<void>(
-      builder: (context) {
-        final pages = _strains.asMap().entries.map((e) {
-          final index = e.key;
-          final strain = e.value;
+    await Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) {
+          final pages = _strains.asMap().entries.map((e) {
+            final index = e.key;
+            final strain = e.value;
 
-          return Flexible(
-            child: DetailsScreen(
-              strain: strain,
-              showBack: index == 0,
-            ),
+            return Flexible(
+              child: DetailsScreen(
+                strain: strain,
+                showBack: index == 0,
+              ),
+            );
+          }).toList();
+
+          // Responsive layout; maximize usable space.
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > constraints.maxHeight) {
+                return Row(
+                  children: pages,
+                );
+              } else {
+                return Column(
+                  children: pages,
+                );
+              }
+            },
           );
-        }).toList();
-
-        // Responsive layout; maximize usable space.
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth > constraints.maxHeight) {
-              return Row(
-                children: pages,
-              );
-            } else {
-              return Column(
-                children: pages,
-              );
-            }
-          },
-        );
-      },
-    ));
+        },
+      ),
+    );
   }
 
   @override

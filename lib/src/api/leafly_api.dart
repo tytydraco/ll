@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:ll/src/util/safe_json.dart';
 
 /// Generate all the strains from Leafly.
 Stream<Map<String, dynamic>> fetchStrains() async* {
@@ -24,14 +25,18 @@ Stream<Map<String, dynamic>> fetchStrains() async* {
     if (req.statusCode != 200) break;
 
     final json = jsonDecode(req.body) as Map<String, dynamic>;
-    final hits = json['hits'] as Map<String, dynamic>;
-    final strains = hits['strain'] as List<dynamic>;
+    final safeJson = SafeJson(json);
+    final strains = safeJson.to('hits').get<List<dynamic>>('strain') ?? [];
 
     for (final strain in strains) {
-      final id = strain['id'] as int;
+      final strainSafe = SafeJson(strain as Map<String, dynamic>);
+      final id = strainSafe.get<int>('id');
+
+      if (id == null) continue;
+
       if (!fetchedIds.contains(id)) {
         fetchedIds.add(id);
-        yield strain as Map<String, dynamic>;
+        yield strain;
       }
     }
 
