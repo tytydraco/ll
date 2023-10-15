@@ -85,47 +85,62 @@ class _DetailsScreenState extends State<DetailsScreen> {
       body: ListView(
         children: [
           //Image.network(widget.strain['nugImage'] as String),
-          _paramTile(
-            'Description',
-            (_strainSafe.get<String>('shortDescriptionPlain')) ?? 'N/A',
-          ),
-          const Divider(),
-          _paramTile(
-            'Other names',
-            (_strainSafe.get<String>('subtitle')) ?? 'N/A',
-          ),
-          const Divider(),
-          _paramTile(
-            'Average rating',
-            _strainSafe.get<double>('averageRating')?.toStringAsFixed(2) ??
-                'N/A',
-          ),
-          const Divider(),
-          _paramTile('Ratings', _strainSafe.get<int>('reviewCount') ?? 'N/A'),
-          const Divider(),
-          _paramTile(
-            'Category',
-            _getCategory(),
-          ),
-          const Divider(),
-          _paramTile(
-            'Main terpene',
-            _strainSafe.get<String>('strainTopTerp') ?? 'N/A',
-          ),
+          if (_strainSafe.get<String>('shortDescriptionPlain') != null) ...[
+            _paramTile(
+              'Description',
+              _strainSafe.get<String>('shortDescriptionPlain'),
+            ),
+            const Divider(),
+          ],
+          if (_strainSafe.get<String>('subtitle') != null) ...[
+            _paramTile(
+              'Other names',
+              _strainSafe.get<String>('subtitle'),
+            ),
+            const Divider(),
+          ],
+          if (_strainSafe.get<double>('averageRating') != null) ...[
+            _paramTile(
+              'Average rating',
+              _strainSafe.get<double>('averageRating')!.toStringAsFixed(2),
+            ),
+            const Divider(),
+          ],
+          if (_strainSafe.get<int>('reviewCount') != null) ...[
+            _paramTile(
+              'Ratings',
+              _strainSafe.get<int>('reviewCount'),
+            ),
+            const Divider(),
+          ],
+          if (_strainSafe.get<String>('category') != null ||
+              _strainSafe.get<String>('phenotype') != null) ...[
+            _paramTile(
+              'Category',
+              _getCategory(),
+            ),
+            const Divider(),
+          ],
+          if (_strainSafe.get<String>('strainTopTerp') != null) ...[
+            _paramTile(
+              'Main terpene',
+              _strainSafe.get<String>('strainTopTerp'),
+            ),
+          ],
           TerpeneChart(strain: widget.strain),
           const Divider(),
-          _paramTile(
-            'Main effect',
-            (_strainSafe.get<String>('topEffect')) ?? 'N/A',
-          ),
+          if (_strainSafe.get<String>('topEffect') != null)
+            _paramTile(
+              'Main effect',
+              _strainSafe.get<String>('topEffect'),
+            ),
           EffectsChart(strain: widget.strain),
           const Divider(),
-          _paramTile(
-            'Average THC content',
-            (_strainSafe.get<double>('thc') != null)
-                ? '${_strainSafe.get<double>('thc')?.round()}%'
-                : 'N/A',
-          ),
+          if (_strainSafe.get<double>('thc') != null)
+            _paramTile(
+              'Average THC content',
+              '${_strainSafe.get<double>('thc')!.round()}%',
+            ),
           CannabinoidsChart(strain: widget.strain),
           const Divider(),
           if (_strainSafe.get<String>('name') != null)
