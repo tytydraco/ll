@@ -76,7 +76,7 @@ class StrainMerge {
       'focused': _getPropAvg(
         (s) => s.to('effects').to('focused').get<double>('score'),
       ),
-      'score': _getPropAvg(
+      'giggly': _getPropAvg(
         (s) => s.to('effects').to('giggly').get<double>('score'),
       ),
       'happy': _getPropAvg(
