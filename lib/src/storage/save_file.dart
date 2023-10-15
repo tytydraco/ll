@@ -54,8 +54,5 @@ Future<List<Strain>> getSavedBookmarkedStrains() async {
   final prefs = await SharedPreferences.getInstance();
   final bookmarkedStrainNames = prefs.getStringList('bookmarks') ?? [];
 
-  final savedStrains = await getSavedStrains();
-  return savedStrains
-      .where((strain) => bookmarkedStrainNames.contains(strain.name ?? 'N/A'))
-      .toList();
+  return getSavedStrainsByName(bookmarkedStrainNames);
 }
