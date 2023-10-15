@@ -27,3 +27,21 @@ List<Color> getStrainGradientColors(String? category) {
       return [Colors.white70, Colors.black54];
   }
 }
+
+/// Returns the color corresponding to the cannabinoid.
+Color getCannabinoidColor(String? cannabinoid) {
+  switch (cannabinoid?.toLowerCase()) {
+    case 'thcv':
+      return Colors.red;
+    case 'cbg':
+      return Colors.orange;
+    case 'cbc':
+      return Colors.yellow;
+    case 'thc':
+      return Colors.green;
+    case 'cbd':
+      return Colors.blue;
+    default:
+      return Colors.black54;
+  }
+}

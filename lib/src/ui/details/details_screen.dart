@@ -6,8 +6,8 @@ import 'package:ll/src/ui/details/cannabinoids_chart.dart';
 import 'package:ll/src/ui/details/effects_chart.dart';
 import 'package:ll/src/ui/details/notes_area.dart';
 import 'package:ll/src/ui/details/terpene_chart.dart';
+import 'package:ll/src/util/colors.dart';
 import 'package:ll/src/util/safe_json.dart';
-import 'package:ll/src/util/strain_colors.dart';
 import 'package:ll/src/util/string_ext.dart';
 
 /// The details about the strain.

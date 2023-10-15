@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:ll/src/util/colors.dart';
 import 'package:ll/src/util/safe_json.dart';
 
 /// Show the cannabinoid content.
@@ -23,22 +24,16 @@ class _Cannabinoid {
   _Cannabinoid({
     required this.id,
     required this.color,
+    required this.score,
   });
 
   final String id;
   final Color color;
+  final double score;
 }
 
 class _CannabinoidsChartState extends State<CannabinoidsChart> {
   late final _strainSafe = SafeJson(widget.strain);
-
-  final _cannabinoidsIndicies = {
-    -2: _Cannabinoid(id: 'thcv', color: Colors.red),
-    -1: _Cannabinoid(id: 'cbg', color: Colors.orange),
-    0: _Cannabinoid(id: 'cbc', color: Colors.yellow),
-    1: _Cannabinoid(id: 'thc', color: Colors.green),
-    2: _Cannabinoid(id: 'cbd', color: Colors.blue),
-  };
 
   BarChartGroupData _buildGroup(int x, _Cannabinoid cannabinoid) {
     final score = _strainSafe
@@ -58,25 +53,45 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
     );
   }
 
-  double _getChartMaxY() {
-    final maxMagnitude = _cannabinoidsIndicies.values
-        .map(
-          (e) =>
-              _strainSafe
-                  .to('cannabinoids')
-                  .to(e.id)
-                  .get<double>('percentile50')
-                  ?.abs() ??
-              0,
-        )
-        .reduce(max);
-
+  double _getChartMaxY(List<_Cannabinoid> cannabinoids) {
+    final maxMagnitude = cannabinoids.map((e) => e.score.abs()).reduce(max);
     // Users need a visual comparison, so adapt to higher values but lock here.
     return max(maxMagnitude, 22);
   }
 
+  List<_Cannabinoid> _getOrderedCannabinoids() {
+    final cannaSafe = _strainSafe.to('cannabinoids');
+    final cannabinoidNames = cannaSafe.json?.keys.toList();
+
+    final cannabinoids = cannabinoidNames?.map((cannabinoid) {
+      final noidSafe = cannaSafe.to(cannabinoid);
+      final score = noidSafe.get<double>('percentile50') ?? 0;
+      final color = getCannabinoidColor(cannabinoid);
+
+      return _Cannabinoid(id: cannabinoid, color: color, score: score);
+    }).toList();
+
+    cannabinoids?.sort((a, b) {
+      final orderA =
+          _strainSafe.to('cannabinoids').to(a.id).get<int>('order') ?? 0;
+      final orderB =
+          _strainSafe.to('cannabinoids').to(b.id).get<int>('order') ?? 0;
+
+      return orderB.compareTo(orderA);
+    });
+
+    return cannabinoids ?? [];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cannabinoids = _getOrderedCannabinoids();
+    final barGroups = cannabinoids
+        .asMap()
+        .entries
+        .map((e) => _buildGroup(e.key, e.value))
+        .toList();
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -86,7 +101,7 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
           child: BarChart(
             BarChartData(
               minY: 0,
-              maxY: _getChartMaxY(),
+              maxY: _getChartMaxY(cannabinoids),
               titlesData: FlTitlesData(
                 leftTitles: const AxisTitles(),
                 rightTitles: const AxisTitles(),
@@ -99,26 +114,18 @@ class _CannabinoidsChartState extends State<CannabinoidsChart> {
                       return Align(
                         alignment: Alignment.bottomCenter,
                         child: Text(
-                          _cannabinoidsIndicies[value]!.id.toUpperCase(),
+                          cannabinoids[value.toInt()].id.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
+                          style: const TextStyle(fontSize: 12),
                         ),
                       );
                     },
                   ),
                 ),
               ),
-              barGroups: _cannabinoidsIndicies.entries
-                  .map((e) => _buildGroup(e.key, e.value))
-                  .toList(),
-              gridData: const FlGridData(
-                show: false,
-              ),
-              borderData: FlBorderData(
-                show: false,
-              ),
+              barGroups: barGroups,
+              gridData: const FlGridData(show: false),
+              borderData: FlBorderData(show: false),
             ),
           ),
         ),
