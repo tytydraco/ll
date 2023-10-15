@@ -41,10 +41,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  String _getCategory() {
-    final category = _strainSafe.get<String>('category');
-    final phenotype = _strainSafe.get<String>('phenotype');
-
+  String _getStrainCategory(String? category, String? phenotype) {
     if (category == null && phenotype != null) return phenotype;
     if (category != null && phenotype == null) return category;
     if (category == null && phenotype == null) return 'N/A';
@@ -61,15 +58,30 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final name = _strainSafe.get<String>('name');
+    final description = _strainSafe.get<String>('shortDescriptionPlain');
+    final otherNames = _strainSafe.get<String>('subtitle');
+    final averageRating = _strainSafe.get<double>('averageRating');
+    final reviewCount = _strainSafe.get<int>('reviewCount');
+    final category = _strainSafe.get<String>('category');
+    final phenotype = _strainSafe.get<String>('phenotype');
+    final topTerp = _strainSafe.get<String>('strainTopTerp');
+    final topEffect = _strainSafe.get<String>('topEffect');
+    final thc = _strainSafe.get<double>('thc');
+
+    final hasTerps = _strainSafe.to('terps').json?.isNotEmpty ?? false;
+    final hasEffects = _strainSafe.to('effects').json?.isNotEmpty ?? false;
+    final hasCannabinoids =
+        _strainSafe.to('cannabinoids').json?.isNotEmpty ?? false;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: widget.showBack,
-        title: Text(_strainSafe.get<String>('name') ?? 'N/A'),
+        title: Text(name ?? 'N/A'),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors:
-                  getStrainGradientColors(_strainSafe.get<String>('category')),
+              colors: getStrainGradientColors(category),
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -85,66 +97,40 @@ class _DetailsScreenState extends State<DetailsScreen> {
       body: ListView(
         children: [
           //Image.network(widget.strain['nugImage'] as String),
-          if (_strainSafe.get<String>('shortDescriptionPlain') != null) ...[
-            _paramTile(
-              'Description',
-              _strainSafe.get<String>('shortDescriptionPlain'),
-            ),
+          if (description != null) ...[
+            _paramTile('Description', description),
             const Divider(),
           ],
-          if (_strainSafe.get<String>('subtitle') != null) ...[
-            _paramTile(
-              'Other names',
-              _strainSafe.get<String>('subtitle'),
-            ),
+          if (otherNames != null) ...[
+            _paramTile('Other names', otherNames),
             const Divider(),
           ],
-          if (_strainSafe.get<double>('averageRating') != null) ...[
-            _paramTile(
-              'Average rating',
-              _strainSafe.get<double>('averageRating')!.toStringAsFixed(2),
-            ),
+          if (averageRating != null) ...[
+            _paramTile('Average rating', averageRating.toStringAsFixed(2)),
             const Divider(),
           ],
-          if (_strainSafe.get<int>('reviewCount') != null) ...[
-            _paramTile(
-              'Ratings',
-              _strainSafe.get<int>('reviewCount'),
-            ),
+          if (reviewCount != null) ...[
+            _paramTile('Ratings', reviewCount),
             const Divider(),
           ],
-          if (_strainSafe.get<String>('category') != null ||
-              _strainSafe.get<String>('phenotype') != null) ...[
-            _paramTile(
-              'Category',
-              _getCategory(),
-            ),
+          if (category != null || phenotype != null) ...[
+            _paramTile('Category', _getStrainCategory(category, phenotype)),
             const Divider(),
           ],
-          if (_strainSafe.get<String>('strainTopTerp') != null) ...[
-            _paramTile(
-              'Main terpene',
-              _strainSafe.get<String>('strainTopTerp'),
-            ),
-          ],
-          TerpeneChart(strain: widget.strain),
-          const Divider(),
-          if (_strainSafe.get<String>('topEffect') != null)
-            _paramTile(
-              'Main effect',
-              _strainSafe.get<String>('topEffect'),
-            ),
-          EffectsChart(strain: widget.strain),
-          const Divider(),
-          if (_strainSafe.get<double>('thc') != null)
-            _paramTile(
-              'Average THC content',
-              '${_strainSafe.get<double>('thc')!.round()}%',
-            ),
-          CannabinoidsChart(strain: widget.strain),
-          const Divider(),
-          if (_strainSafe.get<String>('name') != null)
-            NotesArea(strainName: _strainSafe.get<String>('name')!),
+
+          if (topTerp != null) _paramTile('Main terpene', topTerp),
+          if (hasTerps) TerpeneChart(strain: widget.strain),
+          if (topTerp != null || hasTerps) const Divider(),
+
+          if (topEffect != null) _paramTile('Main effect', topEffect),
+          if (hasEffects) EffectsChart(strain: widget.strain),
+          if (topEffect != null || hasEffects) const Divider(),
+
+          if (thc != null) _paramTile('Average THC content', '${thc.round()}%'),
+          if (hasCannabinoids) CannabinoidsChart(strain: widget.strain),
+          if (thc != null || hasCannabinoids) const Divider(),
+
+          if (name != null) NotesArea(strainName: name),
         ],
       ),
     );
