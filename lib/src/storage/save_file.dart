@@ -29,6 +29,13 @@ Future<List<Map<String, dynamic>>> getSavedStrains() async {
   return saveFileJson.cast<Map<String, dynamic>>().toList();
 }
 
+/// Save a strain to the save file.
+Future<void> addSavedStrain(Map<String, dynamic> strain) async {
+  final savedStrains = await getSavedStrains();
+  savedStrains.add(strain);
+  await setSavedStrains(savedStrains);
+}
+
 /// Fetch saved strains given the strain names.
 Future<List<Map<String, dynamic>>> getSavedStrainsByName(
   List<String> strainNames,
