@@ -35,7 +35,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final _strains = createStrainsSet();
-  var _filteredStrains = createStrainsSet();
+  final _filteredStrains = createStrainsSet();
 
   final _searchController = TextEditingController();
 
