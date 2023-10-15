@@ -77,7 +77,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     final description = widget.strain.description;
     final otherNames = widget.strain.otherNames?.join(', ');
     final averageRating = widget.strain.averageRating;
-    final reviewCount = widget.strain.numberOfRatings;
+    final reviewCount = widget.strain.numberOfReviews;
     final category = widget.strain.category;
     final topTerp = _getTopTerp();
     final topEffect = _getTopEffect();
@@ -123,7 +123,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             const Divider(),
           ],
           if (reviewCount != null) ...[
-            _paramTile('Ratings', reviewCount),
+            _paramTile('Reviews', reviewCount),
             const Divider(),
           ],
           if (category != null) ...[

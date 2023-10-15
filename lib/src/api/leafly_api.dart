@@ -54,7 +54,7 @@ Strain parseLeaflyJson(Map<String, dynamic> rawStrain) {
         strainSafe.get<String>('phenotype'),
     name: strainSafe.get<String>('name'),
     imageUrl: strainSafe.get<String>('nugImage'),
-    numberOfRatings: strainSafe.get<int>('reviewCount'),
+    numberOfReviews: strainSafe.get<int>('reviewCount'),
     description: strainSafe.get<String>('shortDescriptionPlain'),
     otherNames: otherNames,
     thc: strainSafe.get<double>('thc'),

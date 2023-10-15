@@ -8,7 +8,7 @@ class Strain {
     this.thc,
     this.averageRating,
     this.imageUrl,
-    this.numberOfRatings,
+    this.numberOfReviews,
     this.category,
     this.terpenes,
     this.effects,
@@ -23,7 +23,7 @@ class Strain {
         thc = json['thc'] as double?,
         averageRating = json['averageRating'] as double?,
         imageUrl = json['imageUrl'] as String?,
-        numberOfRatings = json['numberOfRatings'] as int?,
+        numberOfReviews = json['numberOfReviews'] as int?,
         category = json['category'] as String?,
         terpenes = (json['terpenes'] as Map<String, dynamic>?)?.cast(),
         effects = (json['effects'] as Map<String, dynamic>?)?.cast(),
@@ -47,8 +47,8 @@ class Strain {
   /// The nug image URL.
   final String? imageUrl;
 
-  /// The number of Leafly ratings.
-  final int? numberOfRatings;
+  /// The number of reviews.
+  final int? numberOfReviews;
 
   /// The strain category.
   final String? category;
@@ -70,7 +70,7 @@ class Strain {
         'thc': thc,
         'averageRating': averageRating,
         'imageUrl': imageUrl,
-        'numberOfRatings': numberOfRatings,
+        'numberOfReviews': numberOfReviews,
         'category': category,
         'terpenes': terpenes,
         'effects': effects,
