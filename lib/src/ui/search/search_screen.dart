@@ -53,7 +53,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _updateStrains() async {
     // Fetch from the web.
-    _strains.clear();
     await for (final strain in fetchStrains()) {
       setState(() {
         _strains.add(strain);
