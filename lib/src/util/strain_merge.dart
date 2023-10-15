@@ -27,41 +27,40 @@ class StrainMerge {
   }
 
   String _mergeMainTerp() {
-    final strainMainTerp = <String, int>{};
-    for (final strain in strains) {
-      final strainSafe = SafeJson(strain);
-      final mainTerp = strainSafe.get<String>('strainTopTerp');
-      if (mainTerp == null) continue;
+    final terpScores = {
+      'caryophyllene': _getPropAvg(
+        (s) => s.to('terps').to('caryophyllene').get<double>('score'),
+      ),
+      'humulene': _getPropAvg(
+        (s) => s.to('terps').to('humulene').get<double>('score'),
+      ),
+      'limonene': _getPropAvg(
+        (s) => s.to('terps').to('limonene').get<double>('score'),
+      ),
+      'linalool': _getPropAvg(
+        (s) => s.to('terps').to('linalool').get<double>('score'),
+      ),
+      'myrcene': _getPropAvg(
+        (s) => s.to('terps').to('myrcene').get<double>('score'),
+      ),
+      'ocimene': _getPropAvg(
+        (s) => s.to('terps').to('ocimene').get<double>('score'),
+      ),
+      'pinene': _getPropAvg(
+        (s) => s.to('terps').to('pinene').get<double>('score'),
+      ),
+      'terpinolene': _getPropAvg(
+        (s) => s.to('terps').to('terpinolene').get<double>('score'),
+      ),
+    };
 
-      if (strainMainTerp.containsKey(mainTerp)) {
-        strainMainTerp[mainTerp] = strainMainTerp[mainTerp]! + 1;
-      } else {
-        strainMainTerp[mainTerp] = 1;
-      }
-    }
-    final mainTerps = strainMainTerp.entries.toList()
+    final topTerps = terpScores.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    return mainTerps.first.key;
-  }
-
-  double _getPropAvg(double? Function(SafeJson strainSafe) getValue) {
-    var score = 0.0;
-    var accountedFor = 0;
-    for (final strain in strains) {
-      final strainSafe = SafeJson(strain);
-      final value = getValue(strainSafe);
-
-      if (value == null) continue;
-
-      accountedFor += 1;
-      score += value;
-    }
-
-    return score / accountedFor;
+    return topTerps.first.key.capitalize();
   }
 
   String _mergeTopEffect() {
-    final topEffectScores = {
+    final effectScores = {
       'aroused': _getPropAvg(
         (s) => s.to('effects').to('aroused').get<double>('score'),
       ),
@@ -103,9 +102,25 @@ class StrainMerge {
       ),
     };
 
-    final topEffects = topEffectScores.entries.toList()
+    final topEffects = effectScores.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     return topEffects.first.key.capitalize();
+  }
+
+  double _getPropAvg(double? Function(SafeJson strainSafe) getValue) {
+    var score = 0.0;
+    var accountedFor = 0;
+    for (final strain in strains) {
+      final strainSafe = SafeJson(strain);
+      final value = getValue(strainSafe);
+
+      if (value == null) continue;
+
+      accountedFor += 1;
+      score += value;
+    }
+
+    return score / accountedFor;
   }
 
   /// Merge the strains together and return the merged strain.
