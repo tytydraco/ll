@@ -3,8 +3,6 @@ import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
-import 'package:ll/src/util/safe_json.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Compare multiple strains against each other.
 class CompareScreen extends StatefulWidget {
@@ -21,16 +19,7 @@ class _CompareScreenState extends State<CompareScreen> {
   final _strains = <Map<String, dynamic>>[];
 
   Future<void> _addBookmarkedStrains() async {
-    final prefs = await SharedPreferences.getInstance();
-    final bookmarkedStrainNames = prefs.getStringList('bookmarks') ?? [];
-
-    final savedStrains = await getSavedStrains();
-    final bookmarkedStrains = savedStrains.where((strain) {
-      final strainSafe = SafeJson(strain);
-      final strainName = strainSafe.get<String>('name') ?? 'N/A';
-
-      return bookmarkedStrainNames.contains(strainName);
-    }).toList();
+    final bookmarkedStrains = await getSavedBookmarkedStrains();
 
     setState(() {
       _strains.addAll(bookmarkedStrains);

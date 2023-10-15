@@ -50,16 +50,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
   }
 
   Future<void> _getBookmarks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final strainNames = prefs.getStringList('bookmarks') ?? [];
-
-    final savedStrains = await getSavedStrains();
-    final bookmarkedStrains = savedStrains.where((strain) {
-      final strainSafe = SafeJson(strain);
-      final strainName = strainSafe.get<String>('name') ?? 'N/A';
-
-      return strainNames.contains(strainName);
-    }).toList();
+    final bookmarkedStrains = await getSavedBookmarkedStrains();
 
     setState(() {
       _strains
