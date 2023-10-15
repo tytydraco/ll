@@ -3,20 +3,21 @@ import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
+import 'package:ll/src/util/strain_merge.dart';
 import 'package:ll/src/util/strain_set.dart';
 
 /// Compare multiple strains against each other.
-class CompareScreen extends StatefulWidget {
-  /// Creates a new [CompareScreen].
-  const CompareScreen({
+class MergeScreen extends StatefulWidget {
+  /// Creates a new [MergeScreen].
+  const MergeScreen({
     super.key,
   });
 
   @override
-  State<CompareScreen> createState() => _CompareScreenState();
+  State<MergeScreen> createState() => _MergeScreenState();
 }
 
-class _CompareScreenState extends State<CompareScreen> {
+class _MergeScreenState extends State<MergeScreen> {
   final _strains = createStrainsSet();
 
   Future<void> _addBookmarkedStrains() async {
@@ -44,47 +45,22 @@ class _CompareScreenState extends State<CompareScreen> {
     );
   }
 
-  Future<void> _compare() async {
+  Future<void> _merge() async {
     if (_strains.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Nothing to compare.'),
+          content: Text('Nothing to merge.'),
         ),
       );
       return;
     }
 
+    final mergeStrain = StrainMerge(strains: _strains).merge();
+
     await Navigator.push(
       context,
       MaterialPageRoute<void>(
-        builder: (context) {
-          final pages = _strains.toList().asMap().entries.map((e) {
-            final index = e.key;
-            final strain = e.value;
-
-            return Flexible(
-              child: DetailsScreen(
-                strain: strain,
-                showBack: index == 0,
-              ),
-            );
-          }).toList();
-
-          // Responsive layout; maximize usable space.
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth > constraints.maxHeight) {
-                return Row(
-                  children: pages,
-                );
-              } else {
-                return Column(
-                  children: pages,
-                );
-              }
-            },
-          );
-        },
+        builder: (context) => DetailsScreen(strain: mergeStrain),
       ),
     );
   }
@@ -93,7 +69,7 @@ class _CompareScreenState extends State<CompareScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Compare'),
+        title: const Text('Merge'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -115,9 +91,9 @@ class _CompareScreenState extends State<CompareScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: const Text('Compare'),
-        onPressed: _compare,
-        icon: const Icon(Icons.compare),
+        label: const Text('Merge'),
+        onPressed: _merge,
+        icon: const Icon(Icons.merge),
       ),
       body: _strains.isNotEmpty
           ? ListView.separated(
@@ -140,7 +116,7 @@ class _CompareScreenState extends State<CompareScreen> {
               itemCount: _strains.length,
             )
           : const Center(
-              child: Text('Add strains to compare.'),
+              child: Text('Add strains to merge.'),
             ),
     );
   }

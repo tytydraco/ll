@@ -8,6 +8,7 @@ import 'package:ll/src/api/leafly_api.dart';
 import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/bookmarks/bookmarks_screen.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
+import 'package:ll/src/ui/merge/merge_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_set.dart';
@@ -25,7 +26,7 @@ class SearchScreen extends StatefulWidget {
   final void Function(Map<String, dynamic> strain)? onSelect;
 
   /// Whether or not the user is trying to select a single strain. This will
-  /// hide the bookmarks button and compare button.
+  /// hide the unnecessary buttons.
   final bool selectMode;
 
   @override
@@ -111,6 +112,15 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  Future<void> _mergeStrains() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => const MergeScreen(),
+      ),
+    );
+  }
+
   Future<void> _showBookmarks() async {
     await Navigator.push(
       context,
@@ -167,6 +177,11 @@ class _SearchScreenState extends State<SearchScreen> {
             IconButton(
               onPressed: _showBookmarks,
               icon: const Icon(Icons.bookmark),
+            ),
+          if (!widget.selectMode)
+            IconButton(
+              onPressed: _mergeStrains,
+              icon: const Icon(Icons.merge),
             ),
           if (!widget.selectMode)
             IconButton(

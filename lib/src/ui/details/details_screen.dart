@@ -102,7 +102,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
           const Divider(),
           _paramTile(
             'Average rating',
-            (_strainSafe.get<double>('averageRating') ?? -1).toStringAsFixed(2),
+            _strainSafe.get<double>('averageRating')?.toStringAsFixed(2) ??
+                'N/A',
           ),
           const Divider(),
           _paramTile('Ratings', _strainSafe.get<int>('reviewCount') ?? 'N/A'),
