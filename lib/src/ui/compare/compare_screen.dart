@@ -3,7 +3,7 @@ import 'package:ll/src/ui/details/details_screen.dart';
 import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 
-/// Compare two strains.
+/// Compare multiple strains against each other.
 class CompareScreen extends StatefulWidget {
   /// Creates a new [CompareScreen].
   const CompareScreen({

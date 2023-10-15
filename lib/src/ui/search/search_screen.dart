@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ll/src/api/leafly_api.dart';
 import 'package:ll/src/storage/save_file.dart';
+import 'package:ll/src/ui/bookmarks/bookmarks_screen.dart';
 import 'package:ll/src/ui/compare/compare_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/safe_json.dart';
@@ -104,11 +105,20 @@ class _SearchScreenState extends State<SearchScreen> {
     return filteredStrains;
   }
 
-  void _compareStrains() {
-    Navigator.push(
+  Future<void> _compareStrains() async {
+    await Navigator.push(
       context,
       MaterialPageRoute<void>(
         builder: (_) => const CompareScreen(),
+      ),
+    );
+  }
+
+  Future<void> _showBookmarks() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => const BookmarksScreen(),
       ),
     );
   }
@@ -152,6 +162,10 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: _showBookmarks,
+            icon: const Icon(Icons.bookmark),
+          ),
           IconButton(
             onPressed: _compareStrains,
             icon: const Icon(Icons.compare),
