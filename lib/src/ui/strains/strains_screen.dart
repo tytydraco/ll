@@ -13,10 +13,10 @@ import 'package:ll/src/ui/strain_list_tile.dart';
 import 'package:ll/src/util/safe_json.dart';
 import 'package:ll/src/util/strain_set.dart';
 
-/// The search screen.
-class SearchScreen extends StatefulWidget {
-  /// Creates a new [SearchScreen].
-  const SearchScreen({
+/// The strains screen.
+class StrainsScreen extends StatefulWidget {
+  /// Creates a new [StrainsScreen].
+  const StrainsScreen({
     super.key,
     this.onSelect,
     this.selectMode = false,
@@ -30,10 +30,10 @@ class SearchScreen extends StatefulWidget {
   final bool selectMode;
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<StrainsScreen> createState() => _StrainsScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _StrainsScreenState extends State<StrainsScreen> {
   final _strains = createStrainsSet();
   final _filteredStrains = createStrainsSet();
 

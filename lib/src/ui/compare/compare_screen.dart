@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
-import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
+import 'package:ll/src/ui/strains/strains_screen.dart';
 
 /// Compare multiple strains against each other.
 class CompareScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class _CompareScreenState extends State<CompareScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute<void>(
-        builder: (context) => SearchScreen(
+        builder: (context) => StrainsScreen(
           selectMode: true,
           onSelect: (strain) {
             Navigator.pop(context);

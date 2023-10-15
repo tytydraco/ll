@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
-import 'package:ll/src/ui/search/search_screen.dart';
+import 'package:ll/src/ui/strains/strains_screen.dart';
 
 /// The home screen.
 class HomeScreen extends StatelessWidget {
@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SearchScreen(
+    return StrainsScreen(
       onSelect: (strain) {
         Navigator.push(
           context,

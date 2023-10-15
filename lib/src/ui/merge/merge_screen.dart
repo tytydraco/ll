@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/ui/details/details_screen.dart';
-import 'package:ll/src/ui/search/search_screen.dart';
 import 'package:ll/src/ui/strain_list_tile.dart';
+import 'package:ll/src/ui/strains/strains_screen.dart';
 import 'package:ll/src/util/strain_merge.dart';
 import 'package:ll/src/util/strain_set.dart';
 
@@ -32,7 +32,7 @@ class _MergeScreenState extends State<MergeScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute<void>(
-        builder: (context) => SearchScreen(
+        builder: (context) => StrainsScreen(
           selectMode: true,
           onSelect: (strain) {
             Navigator.pop(context);
