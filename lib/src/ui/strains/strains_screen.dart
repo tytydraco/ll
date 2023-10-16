@@ -172,6 +172,15 @@ class _StrainsScreenState extends State<StrainsScreen> {
   }
 
   Future<void> _selectRandom() async {
+    if (_strains.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No strains to choose.'),
+        ),
+      );
+      return;
+    }
+
     final randomIndex = Random().nextInt(_strains.length);
     final randomStrain = _strains.toList()[randomIndex];
     widget.onSelect?.call(randomStrain);
