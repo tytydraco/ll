@@ -170,7 +170,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
   }
 
   Future<void> _selectRandom() async {
-    if (_strains.isEmpty) {
+    if (_filteredStrains.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No strains to choose.'),
@@ -179,8 +179,8 @@ class _StrainsScreenState extends State<StrainsScreen> {
       return;
     }
 
-    final randomIndex = Random().nextInt(_strains.length);
-    final randomStrain = _strains.toList()[randomIndex];
+    final randomIndex = Random().nextInt(_filteredStrains.length);
+    final randomStrain = _filteredStrains.toList()[randomIndex];
     widget.onSelect?.call(randomStrain);
   }
 
