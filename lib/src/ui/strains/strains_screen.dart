@@ -274,38 +274,43 @@ class _StrainsScreenState extends State<StrainsScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _updateStrains,
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-            },
-          ),
-          child: _filteredStrains.isNotEmpty
-              ? ListView.separated(
-                  itemBuilder: (context, index) {
-                    final strain = _filteredStrains.toList()[index];
-                    return StrainListTile(
-                      strain: strain,
-                      onSelect: widget.onSelect,
-                    );
-                  },
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemCount: _filteredStrains.length,
-                )
-              : const Center(
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverFillRemaining(
-                        child: Center(
-                          child: Text('Pull to update.'),
-                        ),
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: RefreshIndicator(
+            onRefresh: _updateStrains,
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                },
+              ),
+              child: _filteredStrains.isNotEmpty
+                  ? ListView.separated(
+                      itemBuilder: (context, index) {
+                        final strain = _filteredStrains.toList()[index];
+                        return StrainListTile(
+                          strain: strain,
+                          onSelect: widget.onSelect,
+                        );
+                      },
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemCount: _filteredStrains.length,
+                    )
+                  : const Center(
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverFillRemaining(
+                            child: Center(
+                              child: Text('Pull to update.'),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+            ),
+          ),
         ),
       ),
     );

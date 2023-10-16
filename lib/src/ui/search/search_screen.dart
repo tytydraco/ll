@@ -184,169 +184,175 @@ class _SearchScreenState extends State<SearchScreen> {
         onPressed: _search,
         icon: const Icon(Icons.search),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          _buildLabel('Name'),
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Name...',
-            ),
-          ),
-          const Divider(),
-          _buildLabel('Description'),
-          TextField(
-            controller: _descriptionController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Description...',
-            ),
-          ),
-          const Divider(),
-          _buildLabel('Rating'),
-          RangeSlider(
-            values: _ratingRange,
-            max: 5,
-            divisions: 50,
-            labels: RangeLabels(
-              _ratingRange.start.toString(),
-              _ratingRange.end.toString(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                final roundedStart =
-                    double.parse(value.start.toStringAsFixed(2));
-                final roundedEnd = double.parse(value.end.toStringAsFixed(2));
-                _ratingRange = RangeValues(roundedStart, roundedEnd);
-              });
-            },
-          ),
-          const Divider(),
-          _buildLabel('Reviews'),
-          RangeSlider(
-            values: _reviewCountRange,
-            max: 100000,
-            divisions: 100000,
-            labels: RangeLabels(
-              _reviewCountRange.start.round().toString(),
-              _reviewCountRange.end.round().toString(),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _reviewCountRange = value;
-              });
-            },
-          ),
-          const Divider(),
-          _buildLabel('Average THC content'),
-          RangeSlider(
-            values: _thcRange,
-            max: 100,
-            divisions: 100,
-            labels: RangeLabels(
-              '${_thcRange.start.round()}%',
-              '${_thcRange.end.round()}%',
-            ),
-            onChanged: (value) {
-              setState(() {
-                _thcRange = value;
-              });
-            },
-          ),
-          const Divider(),
-          _buildLabel('Category'),
-          Padding(
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
             padding: const EdgeInsets.all(8),
-            child: SegmentedButton(
-              segments: const [
-                ButtonSegment(
-                  value: 'indica',
-                  label: Text('Indica', style: TextStyle(fontSize: 18)),
-                ),
-                ButtonSegment(
-                  value: 'hybrid',
-                  label: Text('Hybrid', style: TextStyle(fontSize: 18)),
-                ),
-                ButtonSegment(
-                  value: 'sativa',
-                  label: Text('Sativa', style: TextStyle(fontSize: 18)),
-                ),
-              ],
-              selected: _categories,
-              emptySelectionAllowed: true,
-              multiSelectionEnabled: true,
-              onSelectionChanged: (Set<String> selection) {
-                setState(() {
-                  _categories = selection;
-                });
-              },
-            ),
-          ),
-          const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Column(
-                children: [
-                  _buildLabel('Primary terpene'),
-                  TerpeneDropdown(
-                    onSelect: (terpene) {
-                      setState(() {
-                        _primaryTerpene = terpene;
-                      });
-                    },
-                  ),
-                  _buildLabel('Secondary terpene'),
-                  TerpeneDropdown(
-                    onSelect: (terpene) {
-                      setState(() {
-                        _secondaryTerpene = terpene;
-                      });
-                    },
-                  ),
-                  _buildLabel('Tertiary terpene'),
-                  TerpeneDropdown(
-                    onSelect: (terpene) {
-                      setState(() {
-                        _tertiaryTerpene = terpene;
-                      });
-                    },
-                  ),
-                ],
+              _buildLabel('Name'),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Name...',
+                ),
               ),
-              Column(
+              const Divider(),
+              _buildLabel('Description'),
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Description...',
+                ),
+              ),
+              const Divider(),
+              _buildLabel('Rating'),
+              RangeSlider(
+                values: _ratingRange,
+                max: 5,
+                divisions: 50,
+                labels: RangeLabels(
+                  _ratingRange.start.toString(),
+                  _ratingRange.end.toString(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    final roundedStart =
+                        double.parse(value.start.toStringAsFixed(2));
+                    final roundedEnd =
+                        double.parse(value.end.toStringAsFixed(2));
+                    _ratingRange = RangeValues(roundedStart, roundedEnd);
+                  });
+                },
+              ),
+              const Divider(),
+              _buildLabel('Reviews'),
+              RangeSlider(
+                values: _reviewCountRange,
+                max: 100000,
+                divisions: 100000,
+                labels: RangeLabels(
+                  _reviewCountRange.start.round().toString(),
+                  _reviewCountRange.end.round().toString(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _reviewCountRange = value;
+                  });
+                },
+              ),
+              const Divider(),
+              _buildLabel('Average THC content'),
+              RangeSlider(
+                values: _thcRange,
+                max: 100,
+                divisions: 100,
+                labels: RangeLabels(
+                  '${_thcRange.start.round()}%',
+                  '${_thcRange.end.round()}%',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _thcRange = value;
+                  });
+                },
+              ),
+              const Divider(),
+              _buildLabel('Category'),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: SegmentedButton(
+                  segments: const [
+                    ButtonSegment(
+                      value: 'indica',
+                      label: Text('Indica', style: TextStyle(fontSize: 18)),
+                    ),
+                    ButtonSegment(
+                      value: 'hybrid',
+                      label: Text('Hybrid', style: TextStyle(fontSize: 18)),
+                    ),
+                    ButtonSegment(
+                      value: 'sativa',
+                      label: Text('Sativa', style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
+                  selected: _categories,
+                  emptySelectionAllowed: true,
+                  multiSelectionEnabled: true,
+                  onSelectionChanged: (Set<String> selection) {
+                    setState(() {
+                      _categories = selection;
+                    });
+                  },
+                ),
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildLabel('Primary effect'),
-                  EffectDropdown(
-                    onSelect: (effect) {
-                      setState(() {
-                        _primaryEffect = effect;
-                      });
-                    },
+                  Column(
+                    children: [
+                      _buildLabel('Primary terpene'),
+                      TerpeneDropdown(
+                        onSelect: (terpene) {
+                          setState(() {
+                            _primaryTerpene = terpene;
+                          });
+                        },
+                      ),
+                      _buildLabel('Secondary terpene'),
+                      TerpeneDropdown(
+                        onSelect: (terpene) {
+                          setState(() {
+                            _secondaryTerpene = terpene;
+                          });
+                        },
+                      ),
+                      _buildLabel('Tertiary terpene'),
+                      TerpeneDropdown(
+                        onSelect: (terpene) {
+                          setState(() {
+                            _tertiaryTerpene = terpene;
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  _buildLabel('Secondary effect'),
-                  EffectDropdown(
-                    onSelect: (effect) {
-                      setState(() {
-                        _secondaryEffect = effect;
-                      });
-                    },
-                  ),
-                  _buildLabel('Tertiary effect'),
-                  EffectDropdown(
-                    onSelect: (effect) {
-                      setState(() {
-                        _tertiaryEffect = effect;
-                      });
-                    },
+                  Column(
+                    children: [
+                      _buildLabel('Primary effect'),
+                      EffectDropdown(
+                        onSelect: (effect) {
+                          setState(() {
+                            _primaryEffect = effect;
+                          });
+                        },
+                      ),
+                      _buildLabel('Secondary effect'),
+                      EffectDropdown(
+                        onSelect: (effect) {
+                          setState(() {
+                            _secondaryEffect = effect;
+                          });
+                        },
+                      ),
+                      _buildLabel('Tertiary effect'),
+                      EffectDropdown(
+                        onSelect: (effect) {
+                          setState(() {
+                            _tertiaryEffect = effect;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

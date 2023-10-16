@@ -107,44 +107,50 @@ class _DetailsScreenState extends State<DetailsScreen> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          //Image.network(widget.strain['nugImage'] as String),
-          if (description != null) ...[
-            _paramTile('Description', description),
-            const Divider(),
-          ],
-          if (otherNames != null) ...[
-            _paramTile('Other names', otherNames),
-            const Divider(),
-          ],
-          if (averageRating != null) ...[
-            _paramTile('Average rating', averageRating.toStringAsFixed(2)),
-            const Divider(),
-          ],
-          if (reviewCount != null) ...[
-            _paramTile('Reviews', reviewCount),
-            const Divider(),
-          ],
-          if (category != null) ...[
-            _paramTile('Category', category),
-            const Divider(),
-          ],
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
+            children: [
+              //Image.network(widget.strain['nugImage'] as String),
+              if (description != null) ...[
+                _paramTile('Description', description),
+                const Divider(),
+              ],
+              if (otherNames != null) ...[
+                _paramTile('Other names', otherNames),
+                const Divider(),
+              ],
+              if (averageRating != null) ...[
+                _paramTile('Average rating', averageRating.toStringAsFixed(2)),
+                const Divider(),
+              ],
+              if (reviewCount != null) ...[
+                _paramTile('Reviews', reviewCount),
+                const Divider(),
+              ],
+              if (category != null) ...[
+                _paramTile('Category', category),
+                const Divider(),
+              ],
 
-          if (topTerp != null) _paramTile('Main terpene', topTerp),
-          if (hasTerps) TerpeneChart(strain: widget.strain),
-          if (topTerp != null || hasTerps) const Divider(),
+              if (topTerp != null) _paramTile('Main terpene', topTerp),
+              if (hasTerps) TerpeneChart(strain: widget.strain),
+              if (topTerp != null || hasTerps) const Divider(),
 
-          if (topEffect != null) _paramTile('Main effect', topEffect),
-          if (hasEffects) EffectsChart(strain: widget.strain),
-          if (topEffect != null || hasEffects) const Divider(),
+              if (topEffect != null) _paramTile('Main effect', topEffect),
+              if (hasEffects) EffectsChart(strain: widget.strain),
+              if (topEffect != null || hasEffects) const Divider(),
 
-          if (thc != null) _paramTile('Average THC content', '${thc.round()}%'),
-          if (hasCannabinoids) CannabinoidsChart(strain: widget.strain),
-          if (thc != null || hasCannabinoids) const Divider(),
+              if (thc != null)
+                _paramTile('Average THC content', '${thc.round()}%'),
+              if (hasCannabinoids) CannabinoidsChart(strain: widget.strain),
+              if (thc != null || hasCannabinoids) const Divider(),
 
-          if (name != null) NotesArea(strainName: name),
-        ],
+              if (name != null) NotesArea(strainName: name),
+            ],
+          ),
+        ),
       ),
     );
   }

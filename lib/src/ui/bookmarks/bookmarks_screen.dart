@@ -83,38 +83,43 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
           ),
         ],
       ),
-      body: _strains.isNotEmpty
-          ? ListView.separated(
-              itemBuilder: (context, index) {
-                final strain = _strains.toList()[index];
-                return StrainListTile(
-                  strain: strain,
-                  leading: IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        _strains.remove(strain);
-                      });
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: _strains.isNotEmpty
+              ? ListView.separated(
+                  itemBuilder: (context, index) {
+                    final strain = _strains.toList()[index];
+                    return StrainListTile(
+                      strain: strain,
+                      leading: IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            _strains.remove(strain);
+                          });
 
-                      await _saveBookmarks();
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                  onSelect: (strain) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (context) => DetailsScreen(strain: strain),
+                          await _saveBookmarks();
+                        },
+                        icon: const Icon(Icons.delete),
                       ),
+                      onSelect: (strain) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) => DetailsScreen(strain: strain),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: _strains.length,
-            )
-          : const Center(
-              child: Text('Add strains to bookmark.'),
-            ),
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemCount: _strains.length,
+                )
+              : const Center(
+                  child: Text('Add strains to bookmark.'),
+                ),
+        ),
+      ),
     );
   }
 }

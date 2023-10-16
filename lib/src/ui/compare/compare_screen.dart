@@ -132,29 +132,34 @@ class _CompareScreenState extends State<CompareScreen> {
         onPressed: _compare,
         icon: const Icon(Icons.compare),
       ),
-      body: _strains.isNotEmpty
-          ? ListView.separated(
-              itemBuilder: (context, index) {
-                final strain = _strains[index];
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: _strains.isNotEmpty
+              ? ListView.separated(
+                  itemBuilder: (context, index) {
+                    final strain = _strains[index];
 
-                return StrainListTile(
-                  strain: strain,
-                  leading: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _strains.removeAt(index);
-                      });
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                );
-              },
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: _strains.length,
-            )
-          : const Center(
-              child: Text('Add strains to compare.'),
-            ),
+                    return StrainListTile(
+                      strain: strain,
+                      leading: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _strains.removeAt(index);
+                          });
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemCount: _strains.length,
+                )
+              : const Center(
+                  child: Text('Add strains to compare.'),
+                ),
+        ),
+      ),
     );
   }
 }

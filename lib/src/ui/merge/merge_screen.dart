@@ -108,29 +108,34 @@ class _MergeScreenState extends State<MergeScreen> {
         onPressed: _merge,
         icon: const Icon(Icons.merge),
       ),
-      body: _strains.isNotEmpty
-          ? ListView.separated(
-              itemBuilder: (context, index) {
-                final strain = _strains.toList()[index];
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: _strains.isNotEmpty
+              ? ListView.separated(
+                  itemBuilder: (context, index) {
+                    final strain = _strains.toList()[index];
 
-                return StrainListTile(
-                  strain: strain,
-                  leading: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _strains.remove(strain);
-                      });
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                );
-              },
-              separatorBuilder: (_, __) => const Divider(),
-              itemCount: _strains.length,
-            )
-          : const Center(
-              child: Text('Add strains to merge.'),
-            ),
+                    return StrainListTile(
+                      strain: strain,
+                      leading: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _strains.remove(strain);
+                          });
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemCount: _strains.length,
+                )
+              : const Center(
+                  child: Text('Add strains to merge.'),
+                ),
+        ),
+      ),
     );
   }
 }
