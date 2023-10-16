@@ -88,17 +88,21 @@ class _SearchScreenState extends State<SearchScreen> {
         }
       }
 
-      // Match categories...
-      if (_categories.isEmpty) {
-        // If categories == [], then disallow any strains that ARE valid
-        // categories
-        final matchesCategory = ['indica', 'hybrid', 'sativa']
+      if (_categories.isNotEmpty) {
+        final isTraditionalStrain = ['indica', 'hybrid', 'sativa']
             .contains(strain.category?.toLowerCase());
-        if (matchesCategory) return false;
+
+        if (isTraditionalStrain) {
+          final matchesCategory =
+              _categories.contains(strain.category?.toLowerCase());
+          if (!matchesCategory) return false;
+        } else {
+          final isNonTraditionalAllowed = _categories.contains('other');
+          if (!isNonTraditionalAllowed) return false;
+        }
       } else {
-        final matchesCategory =
-            _categories.contains(strain.category?.toLowerCase());
-        if (!matchesCategory) return false;
+        // Impossible query.
+        return false;
       }
 
       // Calculate strain terpene contents...
@@ -287,6 +291,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     ButtonSegment(
                       value: 'sativa',
                       label: Text('Sativa'),
+                    ),
+                    ButtonSegment(
+                      value: 'other',
+                      label: Text('Other'),
                     ),
                   ],
                   selected: _categories,
