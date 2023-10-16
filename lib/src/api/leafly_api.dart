@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/util/safe_json.dart';
@@ -71,6 +72,7 @@ Stream<Strain> fetchStrains() async* {
 
   final fetchedIds = <int>{};
 
+  int? prevHashCode;
   while (true) {
     final req = await get(
       Uri.parse(
@@ -82,8 +84,16 @@ Stream<Strain> fetchStrains() async* {
       ),
     );
 
-    // Break when server is done.
-    if (req.statusCode != 200) break;
+    // Break when server refuses.
+    if (req.statusCode != 200) {
+      if (kDebugMode) print(req.body);
+      break;
+    }
+    ;
+
+    // Break when we stop getting new data.
+    if (req.body.hashCode == prevHashCode) break;
+    prevHashCode = req.body.hashCode;
 
     final json = jsonDecode(req.body) as Map<String, dynamic>;
     final safeJson = SafeJson(json);
