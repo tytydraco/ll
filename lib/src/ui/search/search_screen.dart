@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/storage/save_file.dart';
+import 'package:ll/src/ui/search/effect_dropdown.dart';
+import 'package:ll/src/ui/search/terpene_dropdown.dart';
 
 /// Perform advanced queries.
 class SearchScreen extends StatefulWidget {
@@ -18,6 +20,12 @@ class _SearchScreenState extends State<SearchScreen> {
   var _reviewCountRange = const RangeValues(0, 100000);
   var _thcRange = const RangeValues(0, 100);
   var _categories = <String>{'indica', 'hybrid', 'sativa'};
+  String? _primaryTerpene;
+  String? _secondaryTerpene;
+  String? _tertiaryTerpene;
+  String? _primaryEffect;
+  String? _secondaryEffect;
+  String? _tertiaryEffect;
 
   Future<void> _search() async {
     final savedStrains = await getSavedStrains();
@@ -85,6 +93,57 @@ class _SearchScreenState extends State<SearchScreen> {
         final matchesCategory =
             _categories.contains(strain.category?.toLowerCase());
         if (!matchesCategory) return false;
+      }
+
+      // Calculate strain terpene contents...
+      final sortedTerpenes = strain.terpenes?.entries.toList()
+        ?..sort((a, b) {
+          return (b.value ?? 0).compareTo(a.value ?? 0);
+        });
+      final strainPrimaryTerpene = sortedTerpenes?[0].key.toLowerCase();
+      final strainSecondaryTerpene = sortedTerpenes?[1].key.toLowerCase();
+      final strainTertiaryTerpene = sortedTerpenes?[2].key.toLowerCase();
+
+      // Match primary terpene...
+      if (_primaryTerpene != null && _primaryTerpene != strainPrimaryTerpene) {
+        return false;
+      }
+
+      // Match secondary terpene...
+      if (_secondaryTerpene != null &&
+          _secondaryTerpene != strainSecondaryTerpene) {
+        return false;
+      }
+
+      // Match tertiary terpene...
+      if (_tertiaryTerpene != null &&
+          _tertiaryTerpene != strainTertiaryTerpene) {
+        return false;
+      }
+
+      // Calculate strain effect scores...
+      final sortedEffects = strain.effects?.entries.toList()
+        ?..sort((a, b) {
+          return (b.value ?? 0).compareTo(a.value ?? 0);
+        });
+      final strainPrimaryEffect = sortedEffects?[0].key.toLowerCase();
+      final strainSecondaryEffect = sortedEffects?[1].key.toLowerCase();
+      final strainTertiaryEffect = sortedEffects?[2].key.toLowerCase();
+
+      // Match primary effect...
+      if (_primaryEffect != null && _primaryEffect != strainPrimaryEffect) {
+        return false;
+      }
+
+      // Match secondary effect...
+      if (_secondaryEffect != null &&
+          _secondaryEffect != strainSecondaryEffect) {
+        return false;
+      }
+
+      // Match tertiary effect...
+      if (_tertiaryEffect != null && _tertiaryEffect != strainTertiaryEffect) {
+        return false;
       }
 
       return true;
@@ -226,6 +285,67 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           const Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  _buildLabel('Primary terpene'),
+                  TerpeneDropdown(
+                    onSelect: (terpene) {
+                      setState(() {
+                        _primaryTerpene = terpene;
+                      });
+                    },
+                  ),
+                  _buildLabel('Secondary terpene'),
+                  TerpeneDropdown(
+                    onSelect: (terpene) {
+                      setState(() {
+                        _secondaryTerpene = terpene;
+                      });
+                    },
+                  ),
+                  _buildLabel('Tertiary terpene'),
+                  TerpeneDropdown(
+                    onSelect: (terpene) {
+                      setState(() {
+                        _tertiaryTerpene = terpene;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  _buildLabel('Primary effect'),
+                  EffectDropdown(
+                    onSelect: (effect) {
+                      setState(() {
+                        _primaryEffect = effect;
+                      });
+                    },
+                  ),
+                  _buildLabel('Secondary effect'),
+                  EffectDropdown(
+                    onSelect: (effect) {
+                      setState(() {
+                        _secondaryEffect = effect;
+                      });
+                    },
+                  ),
+                  _buildLabel('Tertiary effect'),
+                  EffectDropdown(
+                    onSelect: (effect) {
+                      setState(() {
+                        _tertiaryEffect = effect;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
