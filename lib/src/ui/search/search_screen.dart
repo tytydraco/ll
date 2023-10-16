@@ -15,7 +15,8 @@ class _SearchScreenState extends State<SearchScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   var _ratingRange = const RangeValues(0, 5);
-  var _reviewCountRange = const RangeValues(0, 1000000);
+  var _reviewCountRange = const RangeValues(0, 100000);
+  var _thcRange = const RangeValues(0, 100);
   var _categories = <String>{'indica', 'hybrid', 'sativa'};
 
   Future<void> _search() async {
@@ -47,17 +48,30 @@ class _SearchScreenState extends State<SearchScreen> {
       }
 
       // Match ratings...
-      if (strain.averageRating == null ||
-          strain.averageRating! < _ratingRange.start ||
-          strain.averageRating! > _ratingRange.end) {
-        return false;
+      if (_ratingRange.start != 0) {
+        if (strain.averageRating == null ||
+            strain.averageRating! < _ratingRange.start ||
+            strain.averageRating! > _ratingRange.end) {
+          return false;
+        }
       }
 
       // Match review count...
-      if (strain.numberOfReviews == null ||
-          strain.numberOfReviews! < _reviewCountRange.start ||
-          strain.numberOfReviews! > _reviewCountRange.end) {
-        return false;
+      if (_reviewCountRange.start != 0) {
+        if (strain.numberOfReviews == null ||
+            strain.numberOfReviews! < _reviewCountRange.start ||
+            strain.numberOfReviews! > _reviewCountRange.end) {
+          return false;
+        }
+      }
+
+      // Match THC content...
+      if (_thcRange.start != 0) {
+        if (strain.thc == null ||
+            strain.thc! < _thcRange.start ||
+            strain.thc! > _thcRange.end) {
+          return false;
+        }
       }
 
       // Match categories...
@@ -154,8 +168,8 @@ class _SearchScreenState extends State<SearchScreen> {
           _buildLabel('Reviews'),
           RangeSlider(
             values: _reviewCountRange,
-            max: 1000000,
-            divisions: 1000000,
+            max: 100000,
+            divisions: 100000,
             labels: RangeLabels(
               _reviewCountRange.start.round().toString(),
               _reviewCountRange.end.round().toString(),
@@ -163,6 +177,22 @@ class _SearchScreenState extends State<SearchScreen> {
             onChanged: (value) {
               setState(() {
                 _reviewCountRange = value;
+              });
+            },
+          ),
+          const Divider(),
+          _buildLabel('Average THC content'),
+          RangeSlider(
+            values: _thcRange,
+            max: 100,
+            divisions: 100,
+            labels: RangeLabels(
+              '${_thcRange.start.round()}%',
+              '${_thcRange.end.round()}%',
+            ),
+            onChanged: (value) {
+              setState(() {
+                _thcRange = value;
               });
             },
           ),
