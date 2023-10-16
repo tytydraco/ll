@@ -189,6 +189,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
     if (strains == null) return;
 
     setState(() {
+      _searchController.clear();
       _filteredStrains.clear();
       if (strains.isNotEmpty) _filteredStrains.addAll(strains);
     });
@@ -303,7 +304,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
                         slivers: [
                           SliverFillRemaining(
                             child: Center(
-                              child: Text('Pull to update.'),
+                              child: Text('No strains found.'),
                             ),
                           ),
                         ],

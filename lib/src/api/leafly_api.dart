@@ -4,11 +4,11 @@ import 'package:http/http.dart';
 import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/util/safe_json.dart';
 
-Strain parseLeaflyJson(Map<String, dynamic> rawStrain) {
+Strain _parseLeaflyJson(Map<String, dynamic> rawStrain) {
   final strainSafe = SafeJson(rawStrain);
 
   final subtitle = strainSafe.get<String>('subtitle');
-  final otherNames = subtitle?.replaceAll('aka', '').split(',');
+  final otherNames = subtitle?.replaceAll('aka ', '').split(', ');
 
   final cannabinoids = {
     'cbc': strainSafe.to('cannabinoids').to('cbc').get<double>('percentile50'),
@@ -97,7 +97,7 @@ Stream<Strain> fetchStrains() async* {
 
       if (!fetchedIds.contains(id)) {
         fetchedIds.add(id);
-        final strain = parseLeaflyJson(rawStrain);
+        final strain = _parseLeaflyJson(rawStrain);
         yield strain;
       }
     }

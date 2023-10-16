@@ -42,8 +42,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 ?.map((e) => e.toLowerCase())
                 .toList()
                 .contains(_nameController.text.toLowerCase()) ??
-            true;
-        if (!matchedName && matchedOtherNames) return false;
+            false;
+        if (!matchedName && !matchedOtherNames) return false;
       }
 
       // Match description...
