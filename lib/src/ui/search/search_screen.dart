@@ -158,7 +158,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Text(
         label,
         style: const TextStyle(
-          fontSize: 18,
+          fontSize: 16,
         ),
       ),
     );
@@ -267,15 +267,15 @@ class _SearchScreenState extends State<SearchScreen> {
                   segments: const [
                     ButtonSegment(
                       value: 'indica',
-                      label: Text('Indica', style: TextStyle(fontSize: 18)),
+                      label: Text('Indica'),
                     ),
                     ButtonSegment(
                       value: 'hybrid',
-                      label: Text('Hybrid', style: TextStyle(fontSize: 18)),
+                      label: Text('Hybrid'),
                     ),
                     ButtonSegment(
                       value: 'sativa',
-                      label: Text('Sativa', style: TextStyle(fontSize: 18)),
+                      label: Text('Sativa'),
                     ),
                   ],
                   selected: _categories,
@@ -289,66 +289,56 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      _buildLabel('Primary terpene'),
-                      TerpeneDropdown(
-                        onSelect: (terpene) {
-                          setState(() {
-                            _primaryTerpene = terpene;
-                          });
-                        },
-                      ),
-                      _buildLabel('Secondary terpene'),
-                      TerpeneDropdown(
-                        onSelect: (terpene) {
-                          setState(() {
-                            _secondaryTerpene = terpene;
-                          });
-                        },
-                      ),
-                      _buildLabel('Tertiary terpene'),
-                      TerpeneDropdown(
-                        onSelect: (terpene) {
-                          setState(() {
-                            _tertiaryTerpene = terpene;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      _buildLabel('Primary effect'),
-                      EffectDropdown(
-                        onSelect: (effect) {
-                          setState(() {
-                            _primaryEffect = effect;
-                          });
-                        },
-                      ),
-                      _buildLabel('Secondary effect'),
-                      EffectDropdown(
-                        onSelect: (effect) {
-                          setState(() {
-                            _secondaryEffect = effect;
-                          });
-                        },
-                      ),
-                      _buildLabel('Tertiary effect'),
-                      EffectDropdown(
-                        onSelect: (effect) {
-                          setState(() {
-                            _tertiaryEffect = effect;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+              _buildLabel('Terpenes'),
+              _buildLabel('Primary terpene'),
+              TerpeneDropdown(
+                onSelect: (terpene) {
+                  setState(() {
+                    _primaryTerpene = terpene;
+                  });
+                },
+              ),
+              _buildLabel('Secondary terpene'),
+              TerpeneDropdown(
+                onSelect: (terpene) {
+                  setState(() {
+                    _secondaryTerpene = terpene;
+                  });
+                },
+              ),
+              _buildLabel('Tertiary terpene'),
+              TerpeneDropdown(
+                onSelect: (terpene) {
+                  setState(() {
+                    _tertiaryTerpene = terpene;
+                  });
+                },
+              ),
+              const Divider(),
+              _buildLabel('Effects'),
+              _buildLabel('Primary effect'),
+              EffectDropdown(
+                onSelect: (effect) {
+                  setState(() {
+                    _primaryEffect = effect;
+                  });
+                },
+              ),
+              _buildLabel('Secondary effect'),
+              EffectDropdown(
+                onSelect: (effect) {
+                  setState(() {
+                    _secondaryEffect = effect;
+                  });
+                },
+              ),
+              _buildLabel('Tertiary effect'),
+              EffectDropdown(
+                onSelect: (effect) {
+                  setState(() {
+                    _tertiaryEffect = effect;
+                  });
+                },
               ),
             ],
           ),
