@@ -6,7 +6,7 @@ import 'package:ll/src/ui/strains/strains_screen.dart';
 import 'package:ll/src/util/strain_set.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Bookmark strains for later..
+/// Bookmark strains for later.
 class BookmarksScreen extends StatefulWidget {
   /// Creates a new [BookmarksScreen].
   const BookmarksScreen({
