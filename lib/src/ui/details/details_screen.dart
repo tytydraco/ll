@@ -48,27 +48,37 @@ class _DetailsScreenState extends State<DetailsScreen> {
   bool _hasNestedProperties(
     Map<String, dynamic>? Function(Strain strain) getValue,
   ) {
-    final nest = getValue(widget.strain);
+    try {
+      final nest = getValue(widget.strain);
 
-    if (nest == null || nest.isEmpty) return false;
+      if (nest == null || nest.isEmpty) return false;
 
-    for (final value in nest.values) {
-      if (value != null) return true;
-    }
+      for (final value in nest.values) {
+        if (value != null) return true;
+      }
+    } catch (_) {}
 
     return false;
   }
 
   String? _getTopTerp() {
-    final topTerps = widget.strain.terpenes?.entries.toList()
-      ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
-    return topTerps?.first.key;
+    try {
+      final topTerps = widget.strain.terpenes?.entries.toList()
+        ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
+      return topTerps?.first.key;
+    } catch (_) {
+      return null;
+    }
   }
 
   String? _getTopEffect() {
-    final topTerps = widget.strain.effects?.entries.toList()
-      ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
-    return topTerps?.first.key;
+    try {
+      final topTerps = widget.strain.effects?.entries.toList()
+        ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
+      return topTerps?.first.key;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
