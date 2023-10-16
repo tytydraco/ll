@@ -54,11 +54,10 @@ class _StrainsScreenState extends State<StrainsScreen> {
   Future<void> _updateStrains() async {
     // Fetch from the web.
     await for (final strain in fetchStrains()) {
-      setState(() {
-        _strains
-          ..removeWhere((e) => e.name == strain.name)
-          ..add(strain);
-      });
+      _strains
+        ..removeWhere((e) => e.name == strain.name)
+        ..add(strain);
+      _updateFilter();
 
       if (kDebugMode) print('(Total: ${_strains.length})\t${strain.name}');
     }
@@ -196,6 +195,14 @@ class _StrainsScreenState extends State<StrainsScreen> {
     // Ignore if user did not search.
     if (strains == null) return;
 
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Found ${strains.length} matches.'),
+        ),
+      );
+    }
+
     setState(() {
       _searchController.clear();
       _filteredStrains.clear();
@@ -254,11 +261,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSavedStrains();
-
-    _filteredStrains
-      ..clear()
-      ..addAll(_strains);
+    _loadSavedStrains().whenComplete(_updateFilter);
   }
 
   @override

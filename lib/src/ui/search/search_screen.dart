@@ -13,12 +13,16 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
+const _maxRatingRange = 5.0;
+const _maxReviewCountRange = 1000.0;
+const _maxThcRange = 100.0;
+
 class _SearchScreenState extends State<SearchScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  var _ratingRange = const RangeValues(0, 5);
-  var _reviewCountRange = const RangeValues(0, 100000);
-  var _thcRange = const RangeValues(0, 100);
+  var _ratingRange = const RangeValues(0, _maxRatingRange);
+  var _reviewCountRange = const RangeValues(0, _maxReviewCountRange);
+  var _thcRange = const RangeValues(0, _maxThcRange);
   var _categories = <String>{'indica', 'hybrid', 'sativa'};
   String? _primaryTerpene;
   String? _secondaryTerpene;
@@ -59,7 +63,8 @@ class _SearchScreenState extends State<SearchScreen> {
       if (_ratingRange.start != 0) {
         if (strain.averageRating == null ||
             strain.averageRating! < _ratingRange.start ||
-            strain.averageRating! > _ratingRange.end) {
+            (strain.averageRating! > _ratingRange.end ||
+                _ratingRange.end == _maxRatingRange)) {
           return false;
         }
       }
@@ -68,7 +73,8 @@ class _SearchScreenState extends State<SearchScreen> {
       if (_reviewCountRange.start != 0) {
         if (strain.numberOfReviews == null ||
             strain.numberOfReviews! < _reviewCountRange.start ||
-            strain.numberOfReviews! > _reviewCountRange.end) {
+            (strain.numberOfReviews! > _reviewCountRange.end ||
+                _reviewCountRange.end == _maxReviewCountRange)) {
           return false;
         }
       }
@@ -77,7 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
       if (_thcRange.start != 0) {
         if (strain.thc == null ||
             strain.thc! < _thcRange.start ||
-            strain.thc! > _thcRange.end) {
+            (strain.thc! > _thcRange.end || _thcRange.end == _maxThcRange)) {
           return false;
         }
       }
@@ -211,11 +217,12 @@ class _SearchScreenState extends State<SearchScreen> {
               _buildLabel('Rating'),
               RangeSlider(
                 values: _ratingRange,
-                max: 5,
+                max: _maxRatingRange,
                 divisions: 50,
                 labels: RangeLabels(
                   _ratingRange.start.toString(),
-                  _ratingRange.end.toString(),
+                  _ratingRange.end.toString() +
+                      (_ratingRange.end == _maxRatingRange ? '+' : ''),
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -231,11 +238,14 @@ class _SearchScreenState extends State<SearchScreen> {
               _buildLabel('Reviews'),
               RangeSlider(
                 values: _reviewCountRange,
-                max: 100000,
-                divisions: 100000,
+                max: _maxReviewCountRange,
+                divisions: 100,
                 labels: RangeLabels(
                   _reviewCountRange.start.round().toString(),
-                  _reviewCountRange.end.round().toString(),
+                  _reviewCountRange.end.round().toString() +
+                      (_reviewCountRange.end == _maxReviewCountRange
+                          ? '+'
+                          : ''),
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -247,11 +257,12 @@ class _SearchScreenState extends State<SearchScreen> {
               _buildLabel('Average THC content'),
               RangeSlider(
                 values: _thcRange,
-                max: 100,
+                max: _maxThcRange,
                 divisions: 100,
                 labels: RangeLabels(
                   '${_thcRange.start.round()}%',
-                  '${_thcRange.end.round()}%',
+                  '${_thcRange.end.round()}%'
+                      '${_thcRange.end == _maxThcRange ? '+' : ''}',
                 ),
                 onChanged: (value) {
                   setState(() {
