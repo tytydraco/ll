@@ -5,8 +5,8 @@ import 'package:ll/src/data/strain.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _saveFileName = 'll_saved_strains.json';
-final _directory = getApplicationCacheDirectory();
+const _saveFileName = 'strain_database.json';
+final _directory = getApplicationDocumentsDirectory();
 
 /// Save the strains to the save file.
 Future<void> setSavedStrains(List<Strain> strains) async {
