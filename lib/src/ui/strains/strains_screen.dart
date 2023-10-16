@@ -148,9 +148,8 @@ class _StrainsScreenState extends State<StrainsScreen> {
       final strainRaw = jsonDecode(content!) as Map<String, dynamic>;
       final strain = Strain.fromJson(strainRaw);
 
-      setState(() {
-        _strains.add(strain);
-      });
+      _strains.add(strain);
+      _updateFilter();
 
       await addSavedStrain(strain);
 
@@ -204,6 +203,54 @@ class _StrainsScreenState extends State<StrainsScreen> {
     });
   }
 
+  Future<void> _askToDeleteStrain(Strain strain) async {
+    final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Confirm deletion'),
+            content: Text('Delete "${strain.name}"?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Confirm'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (confirmed) {
+      _strains.remove(strain);
+      _updateFilter();
+
+      await setSavedStrains(_strains.toList());
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deleted "${strain.name ?? 'N/A'}".'),
+          ),
+        );
+      }
+    }
+  }
+
+  void _updateFilter() {
+    final searchTerm = _searchController.text;
+    final newStrains =
+        searchTerm.isNotEmpty ? _filterStrains(searchTerm) : _strains;
+
+    setState(() {
+      _filteredStrains
+        ..clear()
+        ..addAll(newStrains);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -227,15 +274,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
             hintStyle: TextStyle(color: Colors.white54),
             border: InputBorder.none,
           ),
-          onChanged: (searchTerm) {
-            final newStrains =
-                searchTerm.isNotEmpty ? _filterStrains(searchTerm) : _strains;
-            setState(() {
-              _filteredStrains
-                ..clear()
-                ..addAll(newStrains);
-            });
-          },
+          onChanged: (_) => _updateFilter(),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -303,6 +342,7 @@ class _StrainsScreenState extends State<StrainsScreen> {
                         return StrainListTile(
                           strain: strain,
                           onSelect: widget.onSelect,
+                          onDelete: _askToDeleteStrain,
                         );
                       },
                       separatorBuilder: (_, __) => const Divider(),

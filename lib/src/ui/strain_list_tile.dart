@@ -9,6 +9,7 @@ class StrainListTile extends StatelessWidget {
   const StrainListTile({
     required this.strain,
     this.onSelect,
+    this.onDelete,
     this.leading,
     super.key,
   });
@@ -22,6 +23,9 @@ class StrainListTile extends StatelessWidget {
   /// Triggered when user selects the strain.
   final void Function(Strain)? onSelect;
 
+  /// Triggered when user deletes the strain.
+  final void Function(Strain)? onDelete;
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -32,6 +36,7 @@ class StrainListTile extends StatelessWidget {
         color: getStrainColor(strain.category),
       ),
       onTap: () => onSelect?.call(strain),
+      onLongPress: () => onDelete?.call(strain),
     );
   }
 }
