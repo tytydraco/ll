@@ -62,6 +62,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   String? _getTopTerp() {
+    if (widget.strain.terpenes?.values.where((e) => e != null).isEmpty ??
+        true) {
+      return null;
+    }
+
     try {
       final topTerps = widget.strain.terpenes?.entries.toList()
         ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
@@ -72,6 +77,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   String? _getTopEffect() {
+    if (widget.strain.effects?.values.where((e) => e != null).isEmpty ?? true) {
+      return null;
+    }
+
     try {
       final topTerps = widget.strain.effects?.entries.toList()
         ?..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
