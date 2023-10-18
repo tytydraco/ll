@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ll/src/data/strain.dart';
 import 'package:ll/src/storage/save_file.dart';
@@ -31,130 +32,183 @@ class _SearchScreenState extends State<SearchScreen> {
   String? _secondaryEffect;
   String? _tertiaryEffect;
 
+  /// Match name OR other names...
+  bool _matchesName(Strain strain) {
+    if (_nameController.text.isEmpty) return true;
+
+    final matchedName = strain.name
+            ?.toLowerCase()
+            .contains(_nameController.text.toLowerCase()) ??
+        false;
+
+    final matchedOtherNames = strain.otherNames
+            ?.map((e) => e.toLowerCase())
+            .toList()
+            .contains(_nameController.text.toLowerCase()) ??
+        false;
+
+    return matchedName || matchedOtherNames;
+  }
+
+  bool _matchesDescription(Strain strain) {
+    if (_descriptionController.text.isEmpty) return true;
+
+    return strain.description
+            ?.toLowerCase()
+            .contains(_descriptionController.text.toLowerCase()) ??
+        false;
+  }
+
+  bool _matchesRatingRange(Strain strain) {
+    // If a min range is set...
+    if (_ratingRange.start != 0) {
+      // Do not match un-rated strains.
+      if (strain.averageRating == null) return false;
+      if (strain.averageRating! < _ratingRange.start) return false;
+    }
+
+    // If a max range is set...
+    if (_ratingRange.end != _maxRatingRange) {
+      // Do not match un-rated strains.
+      if (strain.averageRating == null) return false;
+      if (strain.averageRating! > _ratingRange.end) return false;
+    }
+
+    return true;
+  }
+
+  bool _matchesReviewCountRange(Strain strain) {
+    // If a min range is set...
+    if (_reviewCountRange.start != 0) {
+      // Do not match un-reviewed strains.
+      if (strain.numberOfReviews == null) return false;
+      if (strain.numberOfReviews! < _reviewCountRange.start) return false;
+    }
+
+    // If a max range is set...
+    if (_reviewCountRange.end != _maxReviewCountRange) {
+      // Do not match un-reviewed strains.
+      if (strain.numberOfReviews == null) return false;
+      if (strain.numberOfReviews! > _reviewCountRange.end) return false;
+    }
+
+    return true;
+  }
+
+  bool _matchesThcRange(Strain strain) {
+    // If a min range is set...
+    if (_thcRange.start != 0) {
+      // Do not match non-thc-rated strains.
+      if (strain.thc == null) return false;
+      if (strain.thc! < _thcRange.start) return false;
+    }
+
+    // If a max range is set...
+    if (_thcRange.end != _maxThcRange) {
+      // Do not match non-thc-rated strains.
+      if (strain.thc == null) return false;
+      if (strain.thc! > _thcRange.end) return false;
+    }
+
+    return true;
+  }
+
+  bool _matchesCategory(Strain strain) {
+    if (_categories.isEmpty) return false;
+
+    final isTraditional =
+        ['indica', 'hybrid', 'sativa'].contains(strain.category?.toLowerCase());
+
+    if (!isTraditional) {
+      return _categories.contains('other');
+    }
+
+    return _categories.contains(strain.category?.toLowerCase());
+  }
+
+  bool _matchesTerpenes(Strain strain) {
+    final sortedTerpenes = strain.terpenes?.entries.toList()
+      ?..sort((a, b) {
+        return (b.value ?? 0).compareTo(a.value ?? 0);
+      });
+
+    if (_primaryTerpene != null) {
+      if (sortedTerpenes?[0].value == null) return false;
+      if (sortedTerpenes?[0].key != _primaryTerpene!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    if (_secondaryTerpene != null) {
+      if (sortedTerpenes?[1].value == null) return false;
+      if (sortedTerpenes?[1].key != _secondaryTerpene!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    if (_tertiaryTerpene != null) {
+      if (sortedTerpenes?[2].value == null) return false;
+      if (sortedTerpenes?[2].key != _tertiaryTerpene!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool _matchesEffects(Strain strain) {
+    final sortedEffects = strain.effects?.entries.toList()
+      ?..sort((a, b) {
+        return (b.value ?? 0).compareTo(a.value ?? 0);
+      });
+
+    if (_primaryEffect != null) {
+      if (sortedEffects?[0].value == null) return false;
+      if (sortedEffects?[0].key != _primaryEffect!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    if (_secondaryEffect != null) {
+      if (sortedEffects?[1].value == null) return false;
+      if (sortedEffects?[1].key != _secondaryEffect!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    if (_tertiaryEffect != null) {
+      if (sortedEffects?[2].value == null) return false;
+      if (sortedEffects?[2].key != _tertiaryEffect!.toLowerCase()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   Future<void> _search() async {
     final savedStrains = await getSavedStrains();
 
     // Search through all strains with criteria.
     final results = savedStrains.where((strain) {
-      // Match name OR other names...
-      if (_nameController.text.isNotEmpty) {
-        final matchedName = strain.name
-                ?.toLowerCase()
-                .contains(_nameController.text.toLowerCase()) ??
-            false;
-        final matchedOtherNames = strain.otherNames
-                ?.map((e) => e.toLowerCase())
-                .toList()
-                .contains(_nameController.text.toLowerCase()) ??
-            false;
-        if (!matchedName && !matchedOtherNames) return false;
-      }
+      if (kDebugMode) print('> Matching "${strain.name}"...');
 
-      // Match description...
-      if (_descriptionController.text.isNotEmpty) {
-        final matchedDescription = strain.description
-                ?.toLowerCase()
-                .contains(_descriptionController.text.toLowerCase()) ??
-            false;
-        if (!matchedDescription) return false;
-      }
-
-      // Match ratings...
-      if (_ratingRange.start != 0) {
-        if (strain.averageRating == null ||
-            strain.averageRating! < _ratingRange.start ||
-            (strain.averageRating! > _ratingRange.end ||
-                _ratingRange.end == _maxRatingRange)) {
-          return false;
-        }
-      }
-
-      // Match review count...
-      if (_reviewCountRange.start != 0) {
-        if (strain.numberOfReviews == null ||
-            strain.numberOfReviews! < _reviewCountRange.start ||
-            (strain.numberOfReviews! > _reviewCountRange.end ||
-                _reviewCountRange.end == _maxReviewCountRange)) {
-          return false;
-        }
-      }
-
-      // Match THC content...
-      if (_thcRange.start != 0) {
-        if (strain.thc == null ||
-            strain.thc! < _thcRange.start ||
-            (strain.thc! > _thcRange.end || _thcRange.end == _maxThcRange)) {
-          return false;
-        }
-      }
-
-      if (_categories.isNotEmpty) {
-        final isTraditionalStrain = ['indica', 'hybrid', 'sativa']
-            .contains(strain.category?.toLowerCase());
-
-        if (isTraditionalStrain) {
-          final matchesCategory =
-              _categories.contains(strain.category?.toLowerCase());
-          if (!matchesCategory) return false;
-        } else {
-          final isNonTraditionalAllowed = _categories.contains('other');
-          if (!isNonTraditionalAllowed) return false;
-        }
-      } else {
-        // Impossible query.
-        return false;
-      }
-
-      // Calculate strain terpene contents...
-      final sortedTerpenes = strain.terpenes?.entries.toList()
-        ?..sort((a, b) {
-          return (b.value ?? 0).compareTo(a.value ?? 0);
-        });
-      final strainPrimaryTerpene = sortedTerpenes?[0].key.toLowerCase();
-      final strainSecondaryTerpene = sortedTerpenes?[1].key.toLowerCase();
-      final strainTertiaryTerpene = sortedTerpenes?[2].key.toLowerCase();
-
-      // Match primary terpene...
-      if (_primaryTerpene != null && _primaryTerpene != strainPrimaryTerpene) {
-        return false;
-      }
-
-      // Match secondary terpene...
-      if (_secondaryTerpene != null &&
-          _secondaryTerpene != strainSecondaryTerpene) {
-        return false;
-      }
-
-      // Match tertiary terpene...
-      if (_tertiaryTerpene != null &&
-          _tertiaryTerpene != strainTertiaryTerpene) {
-        return false;
-      }
-
-      // Calculate strain effect scores...
-      final sortedEffects = strain.effects?.entries.toList()
-        ?..sort((a, b) {
-          return (b.value ?? 0).compareTo(a.value ?? 0);
-        });
-      final strainPrimaryEffect = sortedEffects?[0].key.toLowerCase();
-      final strainSecondaryEffect = sortedEffects?[1].key.toLowerCase();
-      final strainTertiaryEffect = sortedEffects?[2].key.toLowerCase();
-
-      // Match primary effect...
-      if (_primaryEffect != null && _primaryEffect != strainPrimaryEffect) {
-        return false;
-      }
-
-      // Match secondary effect...
-      if (_secondaryEffect != null &&
-          _secondaryEffect != strainSecondaryEffect) {
-        return false;
-      }
-
-      // Match tertiary effect...
-      if (_tertiaryEffect != null && _tertiaryEffect != strainTertiaryEffect) {
-        return false;
-      }
+      if (kDebugMode) print('${strain.name}: Matching name...');
+      if (!_matchesName(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching description...');
+      if (!_matchesDescription(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching rating...');
+      if (!_matchesRatingRange(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching reviews...');
+      if (!_matchesReviewCountRange(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching THC...');
+      if (!_matchesThcRange(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching category...');
+      if (!_matchesCategory(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching terpenes...');
+      if (!_matchesTerpenes(strain)) return false;
+      if (kDebugMode) print('${strain.name}: Matching effects...');
+      if (!_matchesEffects(strain)) return false;
 
       return true;
     }).toList();

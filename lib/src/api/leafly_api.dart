@@ -49,10 +49,13 @@ Strain _parseLeaflyJson(Map<String, dynamic> rawStrain) {
         strainSafe.to('terps').to('terpinolene').get<double>('score'),
   };
 
+  // If strain is '', replace with null.
+  final categoryRaw = strainSafe.get<String>('category');
+  final category = (categoryRaw?.isNotEmpty ?? false) ? categoryRaw : null;
+
   return Strain(
     averageRating: strainSafe.get<double>('averageRating'),
-    category: strainSafe.get<String>('category') ??
-        strainSafe.get<String>('phenotype'),
+    category: category,
     name: strainSafe.get<String>('name'),
     imageUrl: strainSafe.get<String>('nugImage'),
     numberOfReviews: strainSafe.get<int>('reviewCount'),
