@@ -2,6 +2,6 @@
 
 Leafly Lookup.
 
-# Getting started
+# Web
 
-# Usage
+The web version is hosted on GitHub Pages: [here](https://tytydraco.github.io/ll).
