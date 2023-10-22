@@ -18,14 +18,16 @@ dependencies:
   shared_preferences: ^2.2.2
 
 dev_dependencies:
+  basil:
+    git: https://github.com/tytydraco/basil
   flutter_test:
     sdk: flutter
   very_good_analysis: any
-  basil:
-    git: https://github.com/tytydraco/basil
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/leafly_preprocessed_strains.json
 
 icons_launcher:
   image_path: "assets/icon.png"

@@ -1,11 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:ll/src/data/strain.dart';
+import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/util/safe_json.dart';
 
-Strain _parseLeaflyJson(Map<String, dynamic> rawStrain) {
+import '../util/strain_set.dart';
+
+const _assetPath = 'assets/leafly_preprocessed_strains.json';
+
+/// Parse JSON data of a strain scraped from Leafly.
+Strain parseLeaflyJson(Map<String, dynamic> rawStrain) {
   final strainSafe = SafeJson(rawStrain);
 
   final subtitle = strainSafe.get<String>('subtitle');
@@ -92,7 +99,6 @@ Stream<Strain> fetchStrains() async* {
       if (kDebugMode) print(req.body);
       break;
     }
-    ;
 
     // Break when we stop getting new data.
     if (req.body.hashCode == prevHashCode) break;
@@ -110,11 +116,36 @@ Stream<Strain> fetchStrains() async* {
 
       if (!fetchedIds.contains(id)) {
         fetchedIds.add(id);
-        final strain = _parseLeaflyJson(rawStrain);
+        final strain = parseLeaflyJson(rawStrain);
         yield strain;
       }
     }
 
     skip += take;
+  }
+}
+
+/// Generate all the strains from the provided Leafly preprocessed file.
+Stream<Strain> fetchPreprocessedStrains() async* {
+  try {
+    final fetchedIds = <int>{};
+
+    final rawJson = await rootBundle.loadString(_assetPath);
+    final rawStrains = jsonDecode(rawJson) as List<Map<String, dynamic>>;
+
+    for (final rawStrain in rawStrains) {
+      final strainSafe = SafeJson(rawStrain);
+      final id = strainSafe.get<int>('id');
+
+      if (id == null) continue;
+
+      if (!fetchedIds.contains(id)) {
+        fetchedIds.add(id);
+        final strain = parseLeaflyJson(rawStrain);
+        yield strain;
+      }
+    }
+  } catch (_) {
+    if (kDebugMode) print('Failed to load preprocessed file.');
   }
 }

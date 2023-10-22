@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
@@ -52,8 +53,11 @@ class _StrainsScreenState extends State<StrainsScreen> {
   }
 
   Future<void> _updateStrains() async {
-    // Fetch from the web.
-    await for (final strain in fetchStrains()) {
+    // Choose an offline source for the web client.
+    final strainStream = !kIsWeb ? fetchStrains() : fetchPreprocessedStrains();
+
+    // Process.
+    await for (final strain in strainStream) {
       _strains
         ..removeWhere((e) => e.name == strain.name)
         ..add(strain);
