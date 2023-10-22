@@ -21,6 +21,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   very_good_analysis: any
+  basil:
+    git: https://github.com/tytydraco/basil
 
 flutter:
   uses-material-design: true
