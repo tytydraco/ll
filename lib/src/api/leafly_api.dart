@@ -4,10 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:ll/src/data/strain.dart';
-import 'package:ll/src/storage/save_file.dart';
 import 'package:ll/src/util/safe_json.dart';
-
-import '../util/strain_set.dart';
 
 const _assetPath = 'assets/leafly_preprocessed_strains.json';
 
@@ -131,10 +128,10 @@ Stream<Strain> fetchPreprocessedStrains() async* {
     final fetchedIds = <int>{};
 
     final rawJson = await rootBundle.loadString(_assetPath);
-    final rawStrains = jsonDecode(rawJson) as List<Map<String, dynamic>>;
+    final rawStrains = jsonDecode(rawJson) as List<dynamic>;
 
     for (final rawStrain in rawStrains) {
-      final strainSafe = SafeJson(rawStrain);
+      final strainSafe = SafeJson(rawStrain as Map<String, dynamic>);
       final id = strainSafe.get<int>('id');
 
       if (id == null) continue;
@@ -145,7 +142,7 @@ Stream<Strain> fetchPreprocessedStrains() async* {
         yield strain;
       }
     }
-  } catch (_) {
-    if (kDebugMode) print('Failed to load preprocessed file.');
+  } catch (e) {
+    if (kDebugMode) print('Failed to load preprocessed file: $e');
   }
 }
