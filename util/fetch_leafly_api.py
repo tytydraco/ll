@@ -2,6 +2,11 @@ import requests
 import json
 
 
+headers = {
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0'
+}
+
+
 def scrape():
     take = 20
     skip = 0
@@ -14,7 +19,7 @@ def scrape():
                            '?enableNewFilters=false' +
                            f'&skip={skip}' +
                            '&strain_playlist=' +
-                           f'&take={take}')
+                           f'&take={take}', headers=headers)
 
         # Break when server refuses.
         if req.status_code != 200:
